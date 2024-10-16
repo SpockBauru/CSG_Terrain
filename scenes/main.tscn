@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=4 uid="uid://chkqxcvavjgdb"]
+
+[ext_resource type="Texture2D" uid="uid://bl0aiebbjhpwj" path="res://icon.svg" id="1_blp4n"]
+[ext_resource type="Script" path="res://scripts/csg_terrain.gd" id="2_6gl10"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bbaa8"]
+_surfaces = [{
+"aabb": AABB(0, 0, 0, 3, 1e-05, 2),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqqo+AAAAPwAAAAAAAAA/q6qqPgAAAACrqio/AAAAP6uqKj8AAAAAAACAPwAAAD8AAIA/AAAAAKuqqj4AAIA/AAAAAAAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEAAwAEAAEAAwAFAAQABQAGAAQABQAHAAYAAgAIAAkAAgABAAgAAQAKAAgAAQAEAAoABAALAAoABAAGAAsA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("AAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAQAAAAAAAAIA/AAAAQAAAAAAAAAAAAABAQAAAAAAAAIA/AABAQAAAAAAAAAAAAACAPwAAAAAAAABAAAAAAAAAAAAAAABAAAAAQAAAAAAAAABAAABAQAAAAAAAAABA/3///////7//f///////v/9///////+//3///////7//f///////v/9///////+//3///////7//f///////v/9///////+//3///////7//f///////v/9///////+/")
+}]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kfhl2"]
+albedo_texture = ExtResource("1_blp4n")
+
+[node name="Main" type="Node"]
+
+[node name="CSGTerrain" type="CSGMesh3D" parent="."]
+use_collision = true
+mesh = SubResource("ArrayMesh_bbaa8")
+material = SubResource("StandardMaterial3D_kfhl2")
+script = ExtResource("2_6gl10")
