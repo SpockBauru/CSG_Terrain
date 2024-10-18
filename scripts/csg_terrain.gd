@@ -3,16 +3,16 @@ extends CSGMesh3D
 
 signal remake_terrain
 
+## Size of each side of the square.
 @export var size: float = 500:
 	set(value):
 		size = value
 		remake_terrain.emit()
 
-var div: int = 10
-@export_range(1, 100) var subdivide: int = 50:
+## Number of subdivisions.
+@export_range(1, 100) var divs: int = 50:
 	set(value):
-		subdivide = value
-		div = value
+		divs = value
 		remake_terrain.emit()
 
 @export var clear_terrain: bool = false
@@ -28,8 +28,6 @@ var path_list: Array[Path3D] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	div = subdivide
-	
 	# Create mesh
 	surface_array.resize(Mesh.ARRAY_MAX)
 	remake_all()
@@ -58,7 +56,7 @@ func _child_entered(child) -> void:
 		child = child as Path3D
 		if not is_instance_of(child, CGSTerrainPath):
 			child.set_script(CGSTerrainPath)
-			child.curve.bake_interval = size / div
+			child.curve.bake_interval = size / divs
 		path_list.append(child)
 		child.curve_changed.connect(update_curves)
 
@@ -74,15 +72,15 @@ func _child_exit(child) -> void:
 # Vertex Grid follow the pattern [x][z]. This will important for triangle generation.
 func create_vertex_matrix() -> void:
 	vertex_grid.clear()
-	vertex_grid.resize(div + 1)
+	vertex_grid.resize(divs + 1)
 	
 	# apply scale
-	var step = size / div
+	var step = size / divs
 	
-	for x in range(div + 1):
+	for x in range(divs + 1):
 		var vertices_z: Array = []
-		vertices_z.resize(div + 1)
-		for z in range(div + 1):
+		vertices_z.resize(divs + 1)
+		for z in range(divs + 1):
 			vertices_z[z] = Vector3(x * step, 0, z * step)
 		vertex_grid[x] = vertices_z
 
@@ -92,26 +90,26 @@ func create_mesh_arrays() -> void:
 	
 	# Make uvs
 	uvs.clear()
-	uvs.resize((div + 1) * (div + 1))
-	var uv_step: float = 1.0 / div
+	uvs.resize((divs + 1) * (divs + 1))
+	var uv_step: float = 1.0 / divs
 	#var uv_step_z: float = 1.0 / div_z
 	var index: int = 0
-	for x in range(div + 1):
-		for z in range(div + 1):
+	for x in range(divs + 1):
+		for z in range(divs + 1):
 			uvs[index] = Vector2(x * uv_step, z * uv_step)
 			index += 1
 	
 	# Make faces with two triangles
 	indices.clear()
-	indices.resize(div * div * 6)
+	indices.resize(divs * divs * 6)
 	var row: int = 0
 	var next_row: int = 0
 	index = 0
-	for x in range(div):
+	for x in range(divs):
 		row = next_row
-		next_row += div + 1
+		next_row += divs + 1
 		
-		for z in range(div):
+		for z in range(divs):
 			# First triangle vertices
 			indices[index] = z + row
 			index += 1
@@ -173,8 +171,8 @@ func follow_curve(path: CGSTerrainPath) -> void:
 		# From path position to local position
 		point += pos
 		# From local position to index position
-		point.x = point.x * div / size
-		point.z = point.z * div / size
+		point.x = point.x * divs / size
+		point.z = point.z * divs / size
 		
 		# Position in the vertex grid
 		var x: int = int(point.x)
@@ -182,14 +180,14 @@ func follow_curve(path: CGSTerrainPath) -> void:
 		var y: float = point.y
 		
 		var xmin: int = x - width
-		xmin = clampi(xmin, 0, div + 1)
+		xmin = clampi(xmin, 0, divs + 1)
 		var xmax: int = x + width
-		xmax = clampi(xmax, 0, div + 1)
+		xmax = clampi(xmax, 0, divs + 1)
 		
 		var zmin: int = z - width
-		zmin = clampi(zmin, 0, div + 1)
+		zmin = clampi(zmin, 0, divs + 1)
 		var zmax: int = z + width
-		zmax = clampi(zmax, 0, div + 1)
+		zmax = clampi(zmax, 0, divs + 1)
 		
 		# Smooth around the curve
 		for i in range(xmin, xmax):
@@ -206,7 +204,7 @@ func follow_curve(path: CGSTerrainPath) -> void:
 				var vert2d: Vector2 = Vector2(local_vert.x, local_vert.z)
 				var baked2d: Vector2 = Vector2(baked.x, baked.z)
 				var dist: float = vert2d.distance_to(baked2d)
-				var dist_relative: float = (dist * div) / (width * size)
+				var dist_relative: float = (dist * divs) / (width * size)
 				
 				# Quadratic smooth
 				var lerp_weight: float = dist_relative * dist_relative * smoothness
@@ -219,7 +217,7 @@ func remake_all() -> void:
 	create_mesh_arrays()
 	for path in path_list:
 		path.curve_changed.disconnect(update_curves)
-		path.curve.bake_interval = size / div
+		path.curve.bake_interval = size / divs
 		path.curve_changed.connect(update_curves)
 		follow_curve(path)
 	commit_mesh()
