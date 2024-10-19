@@ -63,6 +63,7 @@ func _child_entered(child) -> void:
 
 func _child_exit(child) -> void:
 	if child is Path3D:
+		child.curve_changed.disconnect(update_curves)
 		var index: int = path_list.find(child)
 		path_list.remove_at(index)
 		if not NOTIFICATION_EXIT_TREE:
@@ -158,14 +159,16 @@ func update_curves() -> void:
 
 
 func follow_curve(path: CGSTerrainPath) -> void:
-	# Grid from old iteraction
-	var old_grid: Array = vertex_grid.duplicate(true)
 	var width: int = path.width
 	var smoothness: float = path.smoothness
 	
 	var pos: Vector3 = path.position
 	var curve: Curve3D = path.curve
 	var points: PackedVector3Array = curve.get_baked_points()
+	
+	# Dictionaries with checked points
+	var points_checked = {}
+	var verts_checked = {}
 	
 	for point in points:
 		# From path position to local position
@@ -178,6 +181,12 @@ func follow_curve(path: CGSTerrainPath) -> void:
 		var x: int = int(point.x)
 		var z: int = int(point.z)
 		var y: float = point.y
+		
+		# Skip if the point was analyzed already
+		var pos2D = Vector2(x,z)
+		if points_checked.has(pos2D):
+			continue
+		points_checked[pos2D] = true
 		
 		var xmin: int = x - width
 		xmin = clampi(xmin, 0, divs + 1)
@@ -192,8 +201,15 @@ func follow_curve(path: CGSTerrainPath) -> void:
 		# Smooth around the curve
 		for i in range(xmin, xmax):
 			for j in range(zmin, zmax):
+				# Skip if the vertex was analyded already
+				pos2D = Vector2(i,j)
+				if verts_checked.has(pos2D):
+					continue
+				verts_checked[pos2D] = true
+				
 				# Current vertex on the mesh
 				var vert: Vector3 = vertex_grid[i][j]
+				vert.y = y
 				
 				# From local position to path position
 				var local_vert: Vector3 = vert - pos
@@ -209,7 +225,7 @@ func follow_curve(path: CGSTerrainPath) -> void:
 				# Quadratic smooth
 				var lerp_weight: float = dist_relative * dist_relative * smoothness
 				lerp_weight = clampf(lerp_weight, 0, 1)
-				var height: float = lerpf(baked.y + pos.y, old_grid[i][j].y, lerp_weight)
+				var height: float = lerpf(baked.y + pos.y, vertex_grid[i][j].y, lerp_weight)
 				vertex_grid[i][j].y = height
 
 
