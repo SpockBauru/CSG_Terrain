@@ -23,8 +23,8 @@ var uvs: PackedVector2Array = []
 var indices: PackedInt32Array = []
 # Mesh in ArrayMesh format
 var surface_array = []
-var path_list: Array[Path3D] = []
-
+var path_list: Array[CSGTerrainPath] = []
+var textures = CSGTerrainTextures.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -54,8 +54,8 @@ func _process(_delta: float) -> void:
 func _child_entered(child) -> void:
 	if child is Path3D:
 		child = child as Path3D
-		if not is_instance_of(child, CGSTerrainPath):
-			child.set_script(CGSTerrainPath)
+		if not is_instance_of(child, CSGTerrainPath):
+			child.set_script(CSGTerrainPath)
 			child.curve.bake_interval = size / divs
 		path_list.append(child)
 		child.curve_changed.connect(update_curves)
@@ -149,6 +149,7 @@ func commit_vertices() -> void:
 	st.generate_tangents()
 	mesh = st.commit()
 	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	textures.apply_textures(path_list, size, material)
 
 
 func update_curves() -> void:
@@ -158,7 +159,7 @@ func update_curves() -> void:
 	commit_vertices()
 
 
-func follow_curve(path: CGSTerrainPath) -> void:
+func follow_curve(path: CSGTerrainPath) -> void:
 	var width: int = path.width
 	var smoothness: float = path.smoothness
 	
@@ -172,47 +173,40 @@ func follow_curve(path: CGSTerrainPath) -> void:
 	
 	for point in points:
 		# From path position to local position
-		point += pos
+		var local_point: Vector3 = point + pos
 		# From local position to index position
-		point.x = point.x * divs / size
-		point.z = point.z * divs / size
+		local_point.x = local_point.x * divs / size
+		local_point.z = local_point.z * divs / size
 		
-		# Position in the vertex grid
-		var x: int = int(point.x)
-		var z: int = int(point.z)
-		var y: float = point.y
+		var point2D: Vector2i = Vector2i(int(local_point.x), int(local_point.z))
+		#vertex_grid[point2D.x][point2D.y].y = local_point.y
 		
-		# Skip if the point was analyzed already
-		var pos2D = Vector2(x,z)
-		if points_checked.has(pos2D):
+		if points_checked.has(point2D):
 			continue
-		points_checked[pos2D] = true
+		points_checked[point2D] = true
 		
-		var xmin: int = x - width
-		xmin = clampi(xmin, 0, divs + 1)
-		var xmax: int = x + width
-		xmax = clampi(xmax, 0, divs + 1)
-		
-		var zmin: int = z - width
-		zmin = clampi(zmin, 0, divs + 1)
-		var zmax: int = z + width
-		zmax = clampi(zmax, 0, divs + 1)
+		var point_min = point2D - width * Vector2i.ONE
+		point_min = point_min.clamp(Vector2i.ZERO, (divs + 1) * Vector2i.ONE)
+		var point_max = point2D + width * Vector2i.ONE
+		point_max = point_max.clamp(Vector2i.ZERO, (divs + 1) * Vector2i.ONE)
 		
 		# Smooth around the curve
-		for i in range(xmin, xmax):
-			for j in range(zmin, zmax):
+		for i in range(point_min.x, point_max.x):
+			for j in range(point_min.y, point_max.y):
 				# Skip if the vertex was analyded already
-				pos2D = Vector2(i,j)
+				var pos2D = Vector2i(i,j)
+				
 				if verts_checked.has(pos2D):
 					continue
 				verts_checked[pos2D] = true
 				
 				# Current vertex on the mesh
 				var vert: Vector3 = vertex_grid[i][j]
-				vert.y = y
 				
 				# From local position to path position
 				var local_vert: Vector3 = vert - pos
+				local_vert.y = point.y
+				
 				# Get closest point in the curve
 				var baked: Vector3 = curve.get_closest_point(local_vert)
 				
@@ -232,8 +226,5 @@ func follow_curve(path: CGSTerrainPath) -> void:
 func remake_all() -> void:
 	create_mesh_arrays()
 	for path in path_list:
-		path.curve_changed.disconnect(update_curves)
-		path.curve.bake_interval = size / divs
-		path.curve_changed.connect(update_curves)
 		follow_curve(path)
 	commit_mesh()
