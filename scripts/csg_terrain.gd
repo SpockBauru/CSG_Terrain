@@ -52,7 +52,8 @@ func _process(_delta: float) -> void:
 	if clear_terrain == true:
 		clear_terrain = false
 		update_mesh()
-	#update_mesh()
+	
+	update_mesh()
 
 
 func _child_entered(child) -> void:
@@ -243,7 +244,7 @@ func follow_curve(path: CSGTerrainPath) -> void:
 		# Point in the vertex_grid
 		var grid_point: Vector3 = local_point * divs / size
 		var grid_index: Vector2i = Vector2i(int(grid_point.x), int(grid_point.z))
-		grid_index = grid_index.clamp(Vector2i.ZERO, (divs + 1) * Vector2i.ONE)
+		grid_index = grid_index.clamp(Vector2i.ZERO, (divs - 1) * Vector2i.ONE)
 		
 		# Edges that make the square around our point. Formed by two vertices each.
 		var edges_idx: Array = [
@@ -293,25 +294,58 @@ func follow_curve(path: CSGTerrainPath) -> void:
 				else:
 					if vertex_2.y > central_point.y:
 						vertex_grid[x2][y2].y = central_point.y
-				
-				DebugDraw3D.draw_sphere(central_point, 0.5, Color.WHITE)
-				DebugDraw3D.draw_line(vertex_1, vertex_2)
-				DebugDraw3D.draw_sphere(local_point, 0.5, Color.RED)
+		
+		if central_point == Vector3.INF: 
+			continue
+		
+		var offset: float = curve.get_closest_offset(point)
+		var transf: Transform3D = curve.sample_baked_with_rotation(offset, false, false)
+		var basis_x: Vector3 = transf.basis.x * size / divs
+		
+		#for x in range(-width, width + 1):
+			##if x == 0: continue
+			#
+			#
+			#var side_point: Vector3 = central_point + basis_x * x
+			#var side_point2D = Vector2(side_point.x, side_point.z)
+			##DebugDraw3D.draw_sphere(side_point, 0.5, Color.GREEN)
+			#
+			#grid_point = side_point * divs / size
+			#grid_index = Vector2i(int(grid_point.x), int(grid_point.z))
+			#grid_index = grid_index.clamp(Vector2i.ZERO, (divs - 1) * Vector2i.ONE)
+			#
+			#
+			#
+			## square around side_point
+			#var vertexex: Array[Vector2] = [
+				#Vector2(grid_index.x, grid_index.y),
+				#Vector2(grid_index.x, grid_index.y + 1),
+				#Vector2(grid_index.x + 1,grid_index.y + 1),
+				#Vector2(grid_index.x + 1,grid_index.y)]
+			#
+			#for vertex_index in vertexex:
+				##if verts_checked.has(vertex_index):
+					##continue
+				##verts_checked[vertex_index] = true
+				#
+				#var vertex: Vector3 = vertex_grid[vertex_index.x][vertex_index.y]
+				#
+				#
+				#var vertex2D: Vector2 = Vector2(vertex.x, vertex.z)
+				#var dist: float = vertex2D.distance_to(Vector2(central_point.x, central_point.z))
+				#var dist_relative: float = (dist * divs) / (width * size)
+				#var lerp_weight: float = dist_relative * dist_relative * smoothness
+				#lerp_weight = clampf(lerp_weight, 0, 1)
+				#var height: float = lerpf(side_point.y, vertex.y, lerp_weight)
+				#vertex.y = height
+				#
+				#vertex_grid[vertex_index.x][vertex_index.y] = vertex
+				##DebugDraw3D.draw_sphere(vertex, 0.5, Color.RED)
+		#DebugDraw3D.draw_sphere(central_point, 0.5, Color.WHITE)
 			
-			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x][grid_index.y], 0.5,  Color.BLUE)
-			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x][grid_index.y+1])
-			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x+1][grid_index.y+1])
-			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x+1][grid_index.y])
-		
-		
-		
-		
-		#if central_point == Vector3.INF: continue
-		
-		#var offset: float = curve.get_closest_offset(point)
-		#var transf: Transform3D = curve.sample_baked_with_rotation(offset, false, false)
-		#var basis_x: Vector3 = transf.basis.x * size / divs
-		
-		#for x in range(-1, 2):
-			#var curved = central_point + basis_x * x
-			#DebugDraw3D.draw_sphere(curved)
+			
+			
+			
+			
+			
+			
