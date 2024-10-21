@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+debug_draw_3d/
 
 # Godot-specific ignores
 .import/

@@ -1,5 +1,5 @@
 shader_type spatial;
-//render_mode ;
+render_mode cull_disabled;
 
 group_uniforms ground;
 uniform float ground_strenght = 3.0;

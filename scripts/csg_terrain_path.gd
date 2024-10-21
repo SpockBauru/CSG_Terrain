@@ -5,7 +5,7 @@ extends Path3D
 ## Number of divisions affected around the path.
 @export var width: int = 5:
 	set(value):
-		if value < 1: value = 1
+		if value < 0: value = 0
 		width = value
 		curve_changed.emit()
 

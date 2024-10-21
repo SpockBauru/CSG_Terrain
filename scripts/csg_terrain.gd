@@ -19,27 +19,30 @@ signal remake_terrain
 
 # Vertex grid in [x][z] plane
 var vertex_grid: Array = []
+
 var uvs: PackedVector2Array = []
 var indices: PackedInt32Array = []
+
 # Mesh in ArrayMesh format
 var surface_array = []
+
 var path_list: Array[CSGTerrainPath] = []
 var textures = CSGTerrainTextures.new()
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Create mesh
 	surface_array.resize(Mesh.ARRAY_MAX)
-	remake_all()
 	
 	# Populate path list
 	path_list.clear()
 	for child in get_children():
 		_child_entered(child)
-	update_curves()
+	update_mesh()
 	
 	# Signals
-	remake_terrain.connect(remake_all)
+	remake_terrain.connect(update_mesh)
 	child_entered_tree.connect(_child_entered)
 	child_exiting_tree.connect(_child_exit)
 
@@ -48,7 +51,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if clear_terrain == true:
 		clear_terrain = false
-		remake_all()
+		update_mesh()
+	#update_mesh()
 
 
 func _child_entered(child) -> void:
@@ -58,20 +62,20 @@ func _child_entered(child) -> void:
 			child.set_script(CSGTerrainPath)
 			child.curve.bake_interval = size / divs
 		path_list.append(child)
-		child.curve_changed.connect(update_curves)
+		child.curve_changed.connect(update_mesh)
 
 
 func _child_exit(child) -> void:
 	if child is Path3D:
-		child.curve_changed.disconnect(update_curves)
+		child.curve_changed.disconnect(update_mesh)
 		var index: int = path_list.find(child)
 		path_list.remove_at(index)
 		if not NOTIFICATION_EXIT_TREE:
-			update_curves()
+			update_mesh()
 
 
-# Vertex Grid follow the pattern [x][z]. This will important for triangle generation.
-func create_vertex_matrix() -> void:
+func create_mesh_arrays() -> void:
+	# Vertex Grid follow the pattern [x][z]. This will important for triangle generation.
 	vertex_grid.clear()
 	vertex_grid.resize(divs + 1)
 	
@@ -84,10 +88,6 @@ func create_vertex_matrix() -> void:
 		for z in range(divs + 1):
 			vertices_z[z] = Vector3(x * step, 0, z * step)
 		vertex_grid[x] = vertices_z
-
-
-func create_mesh_arrays() -> void:
-	create_vertex_matrix()
 	
 	# Make uvs
 	uvs.clear()
@@ -130,10 +130,7 @@ func create_mesh_arrays() -> void:
 func commit_mesh() -> void:
 	surface_array[Mesh.ARRAY_TEX_UV] = uvs
 	surface_array[Mesh.ARRAY_INDEX] = indices
-	commit_vertices()
-
-
-func commit_vertices() -> void:
+	
 	# Organize vertex matrix in format PackedVector3Array
 	var vert_list: PackedVector3Array = []
 	for array in vertex_grid:
@@ -143,23 +140,23 @@ func commit_vertices() -> void:
 	
 	#Commit to the main mash
 	mesh.clear_surfaces()
-	var st: SurfaceTool = SurfaceTool.new()
-	st.create_from_arrays(surface_array)
-	st.generate_normals()
-	st.generate_tangents()
-	mesh = st.commit()
-	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
-	textures.apply_textures(path_list, size, material)
+	#var st: SurfaceTool = SurfaceTool.new()
+	#st.create_from_arrays(surface_array)
+	#st.generate_normals()
+	#st.generate_tangents()
+	#mesh = st.commit()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	#textures.apply_textures(path_list, size, material)
 
 
-func update_curves() -> void:
-	create_vertex_matrix()
+func update_mesh() -> void:
+	create_mesh_arrays()
 	for path in path_list:
 		follow_curve(path)
-	commit_vertices()
+	commit_mesh()
 
 
-func follow_curve(path: CSGTerrainPath) -> void:
+func follow_curve0(path: CSGTerrainPath) -> void:
 	var width: int = path.width
 	var smoothness: float = path.smoothness
 	
@@ -223,8 +220,98 @@ func follow_curve(path: CSGTerrainPath) -> void:
 				vertex_grid[i][j].y = height
 
 
-func remake_all() -> void:
-	create_mesh_arrays()
-	for path in path_list:
-		follow_curve(path)
-	commit_mesh()
+func follow_curve(path: CSGTerrainPath) -> void:
+	DebugDraw3D.config.frustum_length_scale = 1
+	var width: int = path.width
+	var smoothness: float = path.smoothness
+	
+	var pos: Vector3 = path.position
+	var curve: Curve3D = path.curve
+	var points: PackedVector3Array = curve.get_baked_points()
+	
+	# Dictionaries with checked points
+	var points_checked = {}
+	var verts_checked = {}
+	
+	for idx in range(points.size() - 1):
+		var point: Vector3 = points[idx]
+		var local_point: Vector3 = point + pos
+		var next_point: Vector3 = points[idx + 1] + pos
+		var point2D: Vector2 = Vector2(local_point.x, local_point.z)
+		var next_point2D: Vector2 = Vector2(next_point.x, next_point.z)
+		
+		# Point in the vertex_grid
+		var grid_point: Vector3 = local_point * divs / size
+		var grid_index: Vector2i = Vector2i(int(grid_point.x), int(grid_point.z))
+		grid_index = grid_index.clamp(Vector2i.ZERO, (divs + 1) * Vector2i.ONE)
+		
+		# Edges that make the square around our point. Formed by two vertices each.
+		var edges_idx: Array = [
+			[grid_index.x, grid_index.y,      grid_index.x, grid_index.y+1],
+			[grid_index.x, grid_index.y+1,    grid_index.x+1, grid_index.y+1],
+			[grid_index.x+1, grid_index.y+1,  grid_index.x+1, grid_index.y],
+			[grid_index.x+1, grid_index.y,    grid_index.x, grid_index.y]]
+		
+		# Point where the curve cross the square edge in 3D space. Will return INF if not crossed.
+		var central_point: Vector3 = Vector3.INF
+		
+		for edge in edges_idx:
+			var x1: int = edge[0]
+			var y1: int = edge[1]
+			var x2: int = edge[2]
+			var y2: int = edge[3]
+			
+			var vertex_1: Vector3 = vertex_grid[x1][y1]
+			var vertex_2: Vector3 = vertex_grid[x2][y2]
+			var edge2D_1: Vector2 = Vector2(vertex_1.x, vertex_1.z)
+			var edge2D_2: Vector2 = Vector2(vertex_2.x, vertex_2.z)
+			
+			var crossed: PackedVector2Array = Geometry2D.get_closest_points_between_segments(
+				point2D, next_point2D, edge2D_1, edge2D_2)
+			
+			# If the closest point on both segment is the same, so they crossed
+			if crossed[0].is_equal_approx(crossed[1]):
+				# Get the crossed point in the 3D curve
+				var curve_point = Geometry3D.get_closest_points_between_segments(
+					local_point, next_point,
+					Vector3(crossed[0].x, -65536, crossed[0].y),
+					Vector3(crossed[0].x, +65536, crossed[0].y))
+				
+				# Point where the curve cross the square edge in 3D space
+				central_point = curve_point[0]
+				
+				if not points_checked.has(Vector2(x1, y1)):
+					vertex_grid[x1][y1].y = central_point.y
+					points_checked[Vector2(x1, y1)] = true
+				else:
+					if vertex_1.y > central_point.y:
+						vertex_grid[x1][y1].y = central_point.y
+				
+				if not points_checked.has(Vector2(x2, y2)):
+					vertex_grid[x2][y2].y = central_point.y
+					points_checked[Vector2(x2, y2)] = true
+				else:
+					if vertex_2.y > central_point.y:
+						vertex_grid[x2][y2].y = central_point.y
+				
+				DebugDraw3D.draw_sphere(central_point, 0.5, Color.WHITE)
+				DebugDraw3D.draw_line(vertex_1, vertex_2)
+				DebugDraw3D.draw_sphere(local_point, 0.5, Color.RED)
+			
+			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x][grid_index.y], 0.5,  Color.BLUE)
+			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x][grid_index.y+1])
+			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x+1][grid_index.y+1])
+			DebugDraw3D.draw_sphere(vertex_grid[grid_index.x+1][grid_index.y])
+		
+		
+		
+		
+		#if central_point == Vector3.INF: continue
+		
+		#var offset: float = curve.get_closest_offset(point)
+		#var transf: Transform3D = curve.sample_baked_with_rotation(offset, false, false)
+		#var basis_x: Vector3 = transf.basis.x * size / divs
+		
+		#for x in range(-1, 2):
+			#var curved = central_point + basis_x * x
+			#DebugDraw3D.draw_sphere(curved)
