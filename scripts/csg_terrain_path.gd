@@ -3,7 +3,7 @@ class_name CSGTerrainPath
 extends Path3D
 
 ## Number of divisions affected around the path.
-@export var width: int = 5:
+@export var width: int = 3:
 	set(value):
 		if value < 0: value = 0
 		width = value

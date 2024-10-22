@@ -45,15 +45,7 @@ func _ready() -> void:
 	remake_terrain.connect(update_mesh)
 	child_entered_tree.connect(_child_entered)
 	child_exiting_tree.connect(_child_exit)
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	if clear_terrain == true:
-		clear_terrain = false
-		update_mesh()
-	
-	update_mesh()
+	child_order_changed.connect(_child_order_changed)
 
 
 func _child_entered(child) -> void:
@@ -63,17 +55,24 @@ func _child_entered(child) -> void:
 			child.set_script(CSGTerrainPath)
 			child.curve.bake_interval = size / divs
 		path_list.append(child)
-		child.curve_changed.connect(update_mesh)
+		if not child.curve_changed.is_connected(update_mesh):
+			child.curve_changed.connect(update_mesh)
 
 
 func _child_exit(child) -> void:
 	if child is Path3D:
-		child.curve_changed.disconnect(update_mesh)
+		if child.curve_changed.is_connected(update_mesh):
+			child.curve_changed.disconnect(update_mesh)
 		var index: int = path_list.find(child)
 		path_list.remove_at(index)
 		if not NOTIFICATION_EXIT_TREE:
 			update_mesh()
 
+func _child_order_changed():
+	path_list.clear()
+	for child in get_children():
+		if child is CSGTerrainPath:
+			path_list.append(child)
 
 func create_mesh_arrays() -> void:
 	# Vertex Grid follow the pattern [x][z]. This will important for triangle generation.
@@ -141,13 +140,13 @@ func commit_mesh() -> void:
 	
 	#Commit to the main mash
 	mesh.clear_surfaces()
-	#var st: SurfaceTool = SurfaceTool.new()
-	#st.create_from_arrays(surface_array)
-	#st.generate_normals()
-	#st.generate_tangents()
-	#mesh = st.commit()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
-	#textures.apply_textures(path_list, size, material)
+	var st: SurfaceTool = SurfaceTool.new()
+	st.create_from_arrays(surface_array)
+	st.generate_normals()
+	st.generate_tangents()
+	mesh = st.commit()
+	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	textures.apply_textures(path_list, size, material)
 
 
 func update_mesh() -> void:
@@ -155,70 +154,6 @@ func update_mesh() -> void:
 	for path in path_list:
 		follow_curve(path)
 	commit_mesh()
-
-
-func follow_curve0(path: CSGTerrainPath) -> void:
-	var width: int = path.width
-	var smoothness: float = path.smoothness
-	
-	var pos: Vector3 = path.position
-	var curve: Curve3D = path.curve
-	var points: PackedVector3Array = curve.get_baked_points()
-	
-	# Dictionaries with checked points
-	var points_checked = {}
-	var verts_checked = {}
-	
-	for point in points:
-		# From path position to local position
-		var local_point: Vector3 = point + pos
-		# From local position to index position
-		local_point.x = local_point.x * divs / size
-		local_point.z = local_point.z * divs / size
-		
-		var point2D: Vector2i = Vector2i(int(local_point.x), int(local_point.z))
-		#vertex_grid[point2D.x][point2D.y].y = local_point.y
-		
-		if points_checked.has(point2D):
-			continue
-		points_checked[point2D] = true
-		
-		var point_min = point2D - width * Vector2i.ONE
-		point_min = point_min.clamp(Vector2i.ZERO, (divs + 1) * Vector2i.ONE)
-		var point_max = point2D + width * Vector2i.ONE
-		point_max = point_max.clamp(Vector2i.ZERO, (divs + 1) * Vector2i.ONE)
-		
-		# Smooth around the curve
-		for i in range(point_min.x, point_max.x):
-			for j in range(point_min.y, point_max.y):
-				# Skip if the vertex was analyded already
-				var pos2D = Vector2i(i,j)
-				
-				if verts_checked.has(pos2D):
-					continue
-				verts_checked[pos2D] = true
-				
-				# Current vertex on the mesh
-				var vert: Vector3 = vertex_grid[i][j]
-				
-				# From local position to path position
-				var local_vert: Vector3 = vert - pos
-				local_vert.y = point.y
-				
-				# Get closest point in the curve
-				var baked: Vector3 = curve.get_closest_point(local_vert)
-				
-				# Distance between current vertex and curve on the xz plane
-				var vert2d: Vector2 = Vector2(local_vert.x, local_vert.z)
-				var baked2d: Vector2 = Vector2(baked.x, baked.z)
-				var dist: float = vert2d.distance_to(baked2d)
-				var dist_relative: float = (dist * divs) / (width * size)
-				
-				# Quadratic smooth
-				var lerp_weight: float = dist_relative * dist_relative * smoothness
-				lerp_weight = clampf(lerp_weight, 0, 1)
-				var height: float = lerpf(baked.y + pos.y, vertex_grid[i][j].y, lerp_weight)
-				vertex_grid[i][j].y = height
 
 
 func follow_curve(path: CSGTerrainPath) -> void:
@@ -230,122 +165,69 @@ func follow_curve(path: CSGTerrainPath) -> void:
 	var curve: Curve3D = path.curve
 	var points: PackedVector3Array = curve.get_baked_points()
 	
-	# Dictionaries with checked points
-	var points_checked = {}
-	var verts_checked = {}
-	
-	for idx in range(points.size() - 1):
-		var point: Vector3 = points[idx]
+	# Dictionary with vertices around the curve by witdh size
+	var curve_vertices = {}
+	for point in points:
+		#var point: Vector3 = points[idx]
 		var local_point: Vector3 = point + pos
-		var next_point: Vector3 = points[idx + 1] + pos
-		var point2D: Vector2 = Vector2(local_point.x, local_point.z)
-		var next_point2D: Vector2 = Vector2(next_point.x, next_point.z)
 		
 		# Point in the vertex_grid
 		var grid_point: Vector3 = local_point * divs / size
 		var grid_index: Vector2i = Vector2i(int(grid_point.x), int(grid_point.z))
-		grid_index = grid_index.clamp(Vector2i.ZERO, (divs - 1) * Vector2i.ONE)
+		grid_index = grid_index.clamp(Vector2i.ZERO, divs * Vector2i.ONE)
 		
-		# Edges that make the square around our point. Formed by two vertices each.
-		var edges_idx: Array = [
-			[grid_index.x, grid_index.y,      grid_index.x, grid_index.y+1],
-			[grid_index.x, grid_index.y+1,    grid_index.x+1, grid_index.y+1],
-			[grid_index.x+1, grid_index.y+1,  grid_index.x+1, grid_index.y],
-			[grid_index.x+1, grid_index.y,    grid_index.x, grid_index.y]]
+		for i in range(-width + 1, width + 2):
+			for j in range(-width + 1, width + 2):
+				var grid: Vector2i = Vector2i(grid_index.x + i, grid_index.y + j)
+				grid = grid.clamp(Vector2i.ZERO, divs * Vector2i.ONE)
+				curve_vertices[grid] = true
+	
+	
+	for grid_idx in curve_vertices:
+		var vertex: Vector3 = vertex_grid[grid_idx.x][grid_idx.y]
 		
-		# Point where the curve cross the square edge in 3D space. Will return INF if not crossed.
-		var central_point: Vector3 = Vector3.INF
+		# vertex in path space
+		var path_vertex = vertex - pos
+		var path_vertex2D = Vector2(path_vertex.x, path_vertex.z)
+		var closest: Vector3 = get_closest_point_in_xz_plane(curve, path_vertex2D)
+		# Back to local space
+		closest += pos
 		
-		for edge in edges_idx:
-			var x1: int = edge[0]
-			var y1: int = edge[1]
-			var x2: int = edge[2]
-			var y2: int = edge[3]
-			
-			var vertex_1: Vector3 = vertex_grid[x1][y1]
-			var vertex_2: Vector3 = vertex_grid[x2][y2]
-			var edge2D_1: Vector2 = Vector2(vertex_1.x, vertex_1.z)
-			var edge2D_2: Vector2 = Vector2(vertex_2.x, vertex_2.z)
-			
-			var crossed: PackedVector2Array = Geometry2D.get_closest_points_between_segments(
-				point2D, next_point2D, edge2D_1, edge2D_2)
-			
-			# If the closest point on both segment is the same, so they crossed
-			if crossed[0].is_equal_approx(crossed[1]):
-				# Get the crossed point in the 3D curve
-				var curve_point = Geometry3D.get_closest_points_between_segments(
-					local_point, next_point,
-					Vector3(crossed[0].x, -65536, crossed[0].y),
-					Vector3(crossed[0].x, +65536, crossed[0].y))
-				
-				# Point where the curve cross the square edge in 3D space
-				central_point = curve_point[0]
-				
-				if not points_checked.has(Vector2(x1, y1)):
-					vertex_grid[x1][y1].y = central_point.y
-					points_checked[Vector2(x1, y1)] = true
-				else:
-					if vertex_1.y > central_point.y:
-						vertex_grid[x1][y1].y = central_point.y
-				
-				if not points_checked.has(Vector2(x2, y2)):
-					vertex_grid[x2][y2].y = central_point.y
-					points_checked[Vector2(x2, y2)] = true
-				else:
-					if vertex_2.y > central_point.y:
-						vertex_grid[x2][y2].y = central_point.y
+		# Distance relative to path witdh.
+		vertex.y = closest.y
+		var dist = vertex.distance_to(closest)
+		if width == 0: width = 1
+		var dist_relative: float = (dist * divs) / (width * size)
 		
-		if central_point == Vector3.INF: 
-			continue
+		# Quadratic smooth
+		var lerp_weight: float = dist_relative * dist_relative * smoothness
+		lerp_weight = clampf(lerp_weight, 0, 1)
+		var height: float = lerpf(closest.y, vertex_grid[grid_idx.x][grid_idx.y].y, lerp_weight)
 		
-		var offset: float = curve.get_closest_offset(point)
-		var transf: Transform3D = curve.sample_baked_with_rotation(offset, false, false)
-		var basis_x: Vector3 = transf.basis.x * size / divs
+		vertex_grid[grid_idx.x][grid_idx.y].y = height
+
+
+func get_closest_point_in_xz_plane(curve: Curve3D, vertex2D: Vector2) -> Vector3:
+	var baked_points: PackedVector3Array = curve.get_baked_points()
+	
+	var min_dist: float = INF
+	var closest_point: Vector3 = Vector3.ZERO
+	for i in range(baked_points.size() - 1):
+		var point3D: Vector3 = baked_points[i]
+		var point2D: Vector2 = Vector2(point3D.x, point3D.z)
+		var next_point3D: Vector3 = baked_points[i + 1]
+		var next_point2D: Vector2 = Vector2(next_point3D.x,next_point3D.z)
 		
-		#for x in range(-width, width + 1):
-			##if x == 0: continue
-			#
-			#
-			#var side_point: Vector3 = central_point + basis_x * x
-			#var side_point2D = Vector2(side_point.x, side_point.z)
-			##DebugDraw3D.draw_sphere(side_point, 0.5, Color.GREEN)
-			#
-			#grid_point = side_point * divs / size
-			#grid_index = Vector2i(int(grid_point.x), int(grid_point.z))
-			#grid_index = grid_index.clamp(Vector2i.ZERO, (divs - 1) * Vector2i.ONE)
-			#
-			#
-			#
-			## square around side_point
-			#var vertexex: Array[Vector2] = [
-				#Vector2(grid_index.x, grid_index.y),
-				#Vector2(grid_index.x, grid_index.y + 1),
-				#Vector2(grid_index.x + 1,grid_index.y + 1),
-				#Vector2(grid_index.x + 1,grid_index.y)]
-			#
-			#for vertex_index in vertexex:
-				##if verts_checked.has(vertex_index):
-					##continue
-				##verts_checked[vertex_index] = true
-				#
-				#var vertex: Vector3 = vertex_grid[vertex_index.x][vertex_index.y]
-				#
-				#
-				#var vertex2D: Vector2 = Vector2(vertex.x, vertex.z)
-				#var dist: float = vertex2D.distance_to(Vector2(central_point.x, central_point.z))
-				#var dist_relative: float = (dist * divs) / (width * size)
-				#var lerp_weight: float = dist_relative * dist_relative * smoothness
-				#lerp_weight = clampf(lerp_weight, 0, 1)
-				#var height: float = lerpf(side_point.y, vertex.y, lerp_weight)
-				#vertex.y = height
-				#
-				#vertex_grid[vertex_index.x][vertex_index.y] = vertex
-				##DebugDraw3D.draw_sphere(vertex, 0.5, Color.RED)
-		#DebugDraw3D.draw_sphere(central_point, 0.5, Color.WHITE)
+		var closest2D: Vector2 = Geometry2D.get_closest_point_to_segment(vertex2D, point2D, next_point2D)
+		var dist = closest2D.distance_squared_to(vertex2D)
+		
+		if dist < min_dist:
+			min_dist = dist
 			
-			
-			
-			
-			
-			
-			
+			var close3D: PackedVector3Array = Geometry3D.get_closest_points_between_segments(
+				point3D, next_point3D,
+				# Vertical axis that cross the curve
+				Vector3(closest2D.x, -65536, closest2D.y), Vector3(closest2D.x, 65536, closest2D.y))
+			closest_point = close3D[0]
+	
+	return closest_point
