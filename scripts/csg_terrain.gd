@@ -68,11 +68,13 @@ func _child_exit(child) -> void:
 		if not NOTIFICATION_EXIT_TREE:
 			update_mesh()
 
+
 func _child_order_changed():
 	path_list.clear()
 	for child in get_children():
 		if child is CSGTerrainPath:
 			path_list.append(child)
+
 
 func create_mesh_arrays() -> void:
 	# Vertex Grid follow the pattern [x][z]. This will important for triangle generation.
@@ -93,7 +95,6 @@ func create_mesh_arrays() -> void:
 	uvs.clear()
 	uvs.resize((divs + 1) * (divs + 1))
 	var uv_step: float = 1.0 / divs
-	#var uv_step_z: float = 1.0 / div_z
 	var index: int = 0
 	for x in range(divs + 1):
 		for z in range(divs + 1):
@@ -142,6 +143,7 @@ func commit_mesh() -> void:
 	mesh.clear_surfaces()
 	var st: SurfaceTool = SurfaceTool.new()
 	st.create_from_arrays(surface_array)
+	st.optimize_indices_for_cache()
 	st.generate_normals()
 	st.generate_tangents()
 	mesh = st.commit()
@@ -153,6 +155,7 @@ func update_mesh() -> void:
 	create_mesh_arrays()
 	for path in path_list:
 		follow_curve(path)
+	update_mesh_indices()
 	commit_mesh()
 
 
@@ -205,6 +208,57 @@ func follow_curve(path: CSGTerrainPath) -> void:
 		var height: float = lerpf(closest.y, vertex_grid[grid_idx.x][grid_idx.y].y, lerp_weight)
 		
 		vertex_grid[grid_idx.x][grid_idx.y].y = height
+
+
+# There are two ways to triangularize a quad. To better follow the path, convex in y will be used
+func update_mesh_indices() -> void:
+	# Make faces with two triangles
+	indices.clear()
+	indices.resize(divs * divs * 6)
+	var row: int = 0
+	var next_row: int = 0
+	var index: int = 0
+	
+	for x in range(divs):
+		row = next_row
+		next_row += divs + 1
+		for z in range(divs):
+			# there are two ways to triangularize a quad. Each one with one diagonal.
+			# Getting the middle point of each diagonal
+			var diagonal_1: Vector3 = 0.5 * (vertex_grid[x][z] + vertex_grid[x + 1][z + 1])
+			var diagonal_2: Vector3 = 0.5 * (vertex_grid[x+1][z] + vertex_grid[x][z + 1])
+			
+			# The diagonal with the upper middle point will be convex in y
+			if diagonal_1.y >= diagonal_2.y:
+				# First triangle vertices
+				indices[index] = z + row
+				index += 1
+				indices[index] = z + next_row + 1
+				index += 1
+				indices[index] = z + row + 1
+				index += 1
+				# Second triangle vertices
+				indices[index] = z + row
+				index += 1
+				indices[index] = z + next_row
+				index += 1
+				indices[index] = z + next_row + 1
+				index += 1
+			else:
+				# First triangle vertices
+				indices[index] = z + next_row
+				index += 1
+				indices[index] = z + next_row + 1
+				index += 1
+				indices[index] = z + row + 1
+				index += 1
+				## Second triangle vertices
+				indices[index] = z + next_row
+				index += 1
+				indices[index] = z + row + 1
+				index += 1
+				indices[index] = z + row
+				index += 1
 
 
 func get_closest_point_in_xz_plane(curve: Curve3D, vertex2D: Vector2) -> Vector3:

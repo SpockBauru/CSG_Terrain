@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode cull_disabled;
+//render_mode cull_disabled;
 
 group_uniforms ground;
 uniform float ground_strenght = 3.0;
@@ -65,7 +65,7 @@ void fragment() {
 	vec3 wall_albedo_color = texture(wall_albedo, uv * wall_scale).rgb * wall_blend;
 	wall_albedo_color *= wall_color.rgb;
 	ALBEDO = ground_albedo_color + wall_albedo_color;
-	
+
 	float path_mask_value = texture(path_mask, UV).r;
 	vec3 path_albedo_color = texture(path_albedo, uv * path_scale).rgb;
 	path_albedo_color *= path_color.rgb;
@@ -79,7 +79,7 @@ void fragment() {
 	wall_normal *= wall_normal_strenght;
 	//NORMAL_MAP = normalize(ground_normal + wall_normal);
 	NORMAL_MAP = ground_normal + wall_normal;
-	
+
 	vec3 path_normal = texture(path_normal_map, uv * path_scale).rgb;
 	path_normal *= path_normal_strenght;
 	NORMAL_MAP = mix(NORMAL_MAP, path_normal, path_mask_value);
@@ -88,7 +88,7 @@ void fragment() {
 	float ground_rough = ground_roughness * texture(ground_rough_map, uv * ground_scale).r;
 	float wall_rough = wall_roughness * texture(wall_rough_map, uv * wall_scale).r;
 	ROUGHNESS = ground_rough * ground_blend + wall_rough * wall_blend;
-	
+
 	float path_rough = path_roughness * texture(path_rough_map, uv * path_scale).r;
 	ROUGHNESS = mix(ROUGHNESS, path_rough, path_mask_value);
 }
