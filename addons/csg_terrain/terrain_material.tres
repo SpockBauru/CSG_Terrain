@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=15 format=3 uid="uid://bq7gjmdsewwsx"]
 
-[ext_resource type="Shader" path="res://materials/terrain.gdshader" id="1_bsdbs"]
+[ext_resource type="Shader" path="res://addons/csg_terrain/csg_terrain_shader.gdshader" id="1_bsdbs"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 colors = PackedColorArray(0.341176, 0.701961, 0.415686, 1, 0.447059, 0.309804, 0.290196, 1)

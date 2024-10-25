@@ -16,7 +16,7 @@ extends Path3D
 		smoothness = value
 		curve_changed.emit()
 
-@export var path_texture: bool = true:
+@export var path_texture: bool = false:
 	set(value):
 		path_texture = value
 		curve_changed.emit()

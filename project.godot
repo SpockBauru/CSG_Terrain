@@ -15,7 +15,6 @@ run/main_scene="res://demo_scene/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
-[rendering]
+[editor_plugins]
 
-textures/default_filters/anisotropic_filtering_level=3
-anti_aliasing/quality/msaa_3d=2
+enabled=PackedStringArray("res://addons/csg_terrain/plugin.cfg")

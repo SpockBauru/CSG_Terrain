@@ -1,5 +1,6 @@
 @tool
 class_name CSGTerrainTextures
+extends RefCounted
 
 var mask: Image = Image.new()
 
@@ -78,16 +79,19 @@ func apply_textures(path_list: Array[CSGTerrainPath], mask_size: int, size: floa
 		
 		# Set values to pixels
 		for pixel_index in pixel_grid:
+			# Pixel position in the data array
+			var array_index: int = pixel_index.x + pixel_index.y * mask_size
+			var value: int = data[array_index]
+			
 			var closest: Vector2 = curve2D.get_closest_point(Vector2(pixel_index))
 			var dist: float = closest.distance_to(Vector2(pixel_index))
 			var dist_relative: float = dist / texture_width
 			
+			# Quadratic smooth
 			var lerp_weight: float = dist_relative * dist_relative * texture_smoothness
 			lerp_weight = clampf(lerp_weight, 0, 1)
-			var value: int = int(lerp(255, 0, lerp_weight))
+			value = int(lerp(255, value, lerp_weight))
 			
-			# Pixel position in the data array
-			var array_index: int = pixel_index.x + pixel_index.y * mask_size
 			data[array_index] = value
 	
 	mask.set_data(mask_size, mask_size, false, Image.FORMAT_R8, data)

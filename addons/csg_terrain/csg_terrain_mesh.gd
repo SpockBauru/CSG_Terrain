@@ -1,6 +1,7 @@
 @tool
-class_name CSGTerrain
 extends CSGMesh3D
+class_name CSGTerrain
+
 
 signal remake_terrain
 
@@ -25,6 +26,9 @@ signal remake_terrain
 		path_mask_resolution = value
 		_resolution_changed(old_value)
 
+## Create a static MeshInstance3D with optimized material for use in games.[br][br]
+## Good topology is not guaranteed. You may need manually edit in an 3D software.
+@export var create_static_mesh: bool = false
 
 # Vertex grid in [x][z] plane
 var vertex_grid: Array = []
@@ -37,16 +41,16 @@ var surface_array = []
 
 var path_list: Array[CSGTerrainPath] = []
 var textures = CSGTerrainTextures.new()
+var export = CSGTerrainExport.new()
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if not is_instance_valid(mesh):
 		mesh = ArrayMesh.new()
-		print("instance")
 	
 	if not is_instance_valid(material):
-		material = load("res://materials/terrain_material.tres").duplicate()
+		material = load("res://addons/csg_terrain/terrain_material.tres").duplicate()
 	
 	# Create mesh
 	surface_array.resize(Mesh.ARRAY_MAX)
@@ -62,6 +66,12 @@ func _ready() -> void:
 	child_entered_tree.connect(_child_entered)
 	child_exiting_tree.connect(_child_exit)
 	child_order_changed.connect(_child_order_changed)
+
+
+func _process(_delta: float) -> void:
+	if create_static_mesh == true:
+		create_static_mesh = false
+		export.create_mesh(self)
 
 
 func _child_entered(child) -> void:
@@ -168,6 +178,7 @@ func create_mesh_arrays() -> void:
 
 func commit_mesh() -> void:
 	surface_array[Mesh.ARRAY_TEX_UV] = uvs
+	surface_array[Mesh.ARRAY_TEX_UV2] = uvs
 	surface_array[Mesh.ARRAY_INDEX] = indices
 	
 	# Organize vertex matrix in format PackedVector3Array
@@ -214,13 +225,20 @@ func follow_curve(path: CSGTerrainPath) -> void:
 		# Point in the vertex_grid
 		var grid_point: Vector3 = local_point * divs / size
 		var grid_index: Vector2i = Vector2i(int(grid_point.x), int(grid_point.z))
-		grid_index = grid_index.clamp(Vector2i.ZERO, divs * Vector2i.ONE)
 		
-		for i in range(-width + 1, width + 2):
-			for j in range(-width + 1, width + 2):
-				var grid: Vector2i = Vector2i(grid_index.x + i, grid_index.y + j)
-				grid = grid.clamp(Vector2i.ZERO, divs * Vector2i.ONE)
-				curve_vertices[grid] = true
+		# Exprore the region around the point. Cut out points outside the grid
+		var range_min_x: int = -width + 1 + grid_index.x
+		range_min_x = clampi(range_min_x, 0, divs + 1)
+		var range_max_x: int = width + 2 + grid_index.x
+		range_max_x = clampi(range_max_x, 0, divs + 1)
+		var range_min_y: int = -width + 1 + grid_index.y
+		range_min_y = clampi(range_min_y, 0, divs + 1)
+		var range_max_y: int = width + 2 + grid_index.y
+		range_max_y = clampi(range_max_y, 0, divs + 1)
+		
+		for i in range(range_min_x, range_max_x):
+			for j in range(range_min_y, range_max_y):
+				curve_vertices[Vector2i(i, j)] = true
 	
 	for grid_idx in curve_vertices:
 		var vertex: Vector3 = vertex_grid[grid_idx.x][grid_idx.y]

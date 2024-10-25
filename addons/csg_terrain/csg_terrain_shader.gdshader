@@ -26,7 +26,7 @@ uniform float wall_roughness = 1.0;
 group_uniforms;
 
 group_uniforms Path;
-uniform sampler2D path_mask: filter_nearest;
+uniform sampler2D path_mask: filter_linear;
 uniform vec2 path_scale = vec2(0.1, 0.1);
 uniform vec4 path_color: source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform sampler2D path_albedo : source_color, filter_linear_mipmap_anisotropic;
