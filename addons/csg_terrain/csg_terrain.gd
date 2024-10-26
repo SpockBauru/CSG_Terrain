@@ -65,6 +65,7 @@ func _process(_delta: float) -> void:
 		create_static_mesh = false
 		var export = CSGTerrainExport.new()
 		export.create_mesh(self)
+	#update_mesh()
 
 
 func _child_entered(child) -> void:
@@ -100,21 +101,28 @@ func _size_changed(old_size: float) -> void:
 		path.curve_changed.disconnect(update_mesh)
 		var new_width = path.width * old_size / size
 		path.width = int(new_width)
-		path.curve_changed.connect(update_mesh)
 		var new_texture_width = path.texture_width * old_size / size
 		path.texture_width = int(new_texture_width)
+		path.curve_changed.connect(update_mesh)
+	update_mesh()
 
 
 func _divs_changed(old_divs: int) -> void:
 	for path in path_list:
+		path.curve_changed.disconnect(update_mesh)
 		var new_width: float = path.width * float(divs) / old_divs
 		path.width = int(new_width)
+		path.curve_changed.connect(update_mesh)
+	update_mesh()
 
 
 func _resolution_changed(old_resolution) -> void:
 	for path in path_list:
+		path.curve_changed.disconnect(update_mesh)
 		var new_texture_width = path.texture_width * path_mask_resolution / old_resolution
 		path.texture_width = int(new_texture_width)
+		path.curve_changed.connect(update_mesh)
+	update_mesh()
 
 
 func create_mesh_arrays() -> void:
@@ -126,7 +134,7 @@ func create_mesh_arrays() -> void:
 	var step = size / divs
 	
 	for x in range(divs + 1):
-		var vertices_z: Array = []
+		var vertices_z: PackedVector3Array = []
 		vertices_z.resize(divs + 1)
 		for z in range(divs + 1):
 			vertices_z[z] = Vector3(x * step, 0, z * step)
@@ -184,15 +192,39 @@ func commit_mesh() -> void:
 	
 	surface_array[Mesh.ARRAY_VERTEX] = vert_list
 	
+	# Make normals according Clever Normalization of a Mesh: https://iquilezles.org/articles/normals/
+	# Making manually because using surfacetool was 3-5 times slower
+	var normals: PackedVector3Array = []
+	normals.resize((divs + 1) * (divs + 1))
+	var index: int = 0
+	for i in range(indices.size() / 3):
+		# Vertices of the triangle
+		var a: Vector3 = vert_list[indices[index]]
+		index += 1
+		var b: Vector3 = vert_list[indices[index]]
+		index += 1
+		var c: Vector3 = vert_list[indices[index]]
+		index += 1
+		
+		# Creating normal from edges
+		var edge1: Vector3 = b - a
+		var edge2: Vector3 = c - a
+		var normal: Vector3 = edge1.cross(edge2)
+		
+		# Adding normal to each vertex
+		normals[indices[index - 1]] += normal
+		normals[indices[index - 2]] += normal
+		normals[indices[index - 3]] += normal
+	
+	# Normalize and apply
+	for i in range(normals.size()):
+		normals[i] = normals[i].normalized()
+	
+	surface_array[Mesh.ARRAY_NORMAL] = normals
+	
 	#Commit to the main mash
 	mesh.clear_surfaces()
-	var st: SurfaceTool = SurfaceTool.new()
-	st.create_from_arrays(surface_array)
-	st.optimize_indices_for_cache()
-	st.generate_normals()
-	st.generate_tangents()
-	mesh = st.commit()
-	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
 	textures.apply_textures(path_list, path_mask_resolution, size, material)
 
 
@@ -212,7 +244,6 @@ func follow_curve(path: CSGTerrainPath) -> void:
 	var points: PackedVector3Array = curve.get_baked_points()
 	
 	if points.size() < 2: return
-	
 	# Dictionary with vertices around the curve by witdh size
 	var curve_vertices = {}
 	for point in points:
@@ -236,14 +267,22 @@ func follow_curve(path: CSGTerrainPath) -> void:
 			for j in range(range_min_y, range_max_y):
 				curve_vertices[Vector2i(i, j)] = true
 	
+	# Make a curve on xz plane
+	var points2D: Array[Vector2] = []
+	points2D.resize(points.size())
+	for i in range(points.size()):
+		var point: Vector3 = points[i]
+		points2D[i] = Vector2(point.x, point.z)
+	
+	# Interpolate the height of the vertices
 	for grid_idx in curve_vertices:
 		var vertex: Vector3 = vertex_grid[grid_idx.x][grid_idx.y]
 		var old_vertex: Vector3 = vertex
 		
-		# vertex in path space
+		# Vertex in path space
 		var path_vertex: Vector3 = vertex - pos
-		var path_vertex2D = Vector2(path_vertex.x, path_vertex.z)
-		var closest: Vector3 = get_closest_point_in_xz_plane(curve, path_vertex2D)
+		var closest: Vector3 = get_closest_point_in_xz_plane(points2D, points, path_vertex)
+		
 		# Back to local space
 		closest += pos
 		
@@ -266,35 +305,34 @@ func follow_curve(path: CSGTerrainPath) -> void:
 		update_quad_indices(grid_idx)
 
 
-func get_closest_point_in_xz_plane(curve: Curve3D, vertex2D: Vector2) -> Vector3:
-	var baked_points: PackedVector3Array = curve.get_baked_points()
-	var closest_point: Vector3 = Vector3.ZERO
-	var closest_point2D: Vector2 = Vector2.ZERO
+func get_closest_point_in_xz_plane(points_2D: Array[Vector2], points_3D: Array[Vector3], vertex3D: Vector3) -> Vector3:
+	var vertex2D = Vector2(vertex3D.x, vertex3D.z)
+	var closest2D: Vector2 = Vector2.ZERO
 	
 	# Get the closest point in xz plane
 	var min_dist: float = INF
-	var min_dist_idx: int = 0
-	for i in range(baked_points.size() - 1):
-		var point2D: Vector2 = Vector2(baked_points[i].x, baked_points[i].z)
-		var next_point2D: Vector2 = Vector2(baked_points[i + 1].x,baked_points[i + 1].z)
+	var min_idx: int = 0
+	for i in range(points_2D.size() - 1):
+		var point2D: Vector2 = points_2D[i]
+		var next_point2D: Vector2 = points_2D[i + 1]
 		
-		var closest2D: Vector2 = Geometry2D.get_closest_point_to_segment(vertex2D, point2D, next_point2D)
-		var dist = closest2D.distance_squared_to(vertex2D)
+		var closest: Vector2 = Geometry2D.get_closest_point_to_segment(vertex2D, point2D, next_point2D)
+		var dist = closest.distance_squared_to(vertex2D)
 		
 		if dist < min_dist:
 			min_dist = dist
-			min_dist_idx = i
-			closest_point2D = closest2D
+			min_idx = i
+			closest2D = closest
 	
 	# Get the point in the 3D curve
-	var point3D: Vector3 = baked_points[min_dist_idx]
-	var next_point3D: Vector3 = baked_points[min_dist_idx + 1]
+	var point3D: Vector3 = points_3D[min_idx]
+	var next_point3D: Vector3 = points_3D[min_idx + 1]
 	var close3D: PackedVector3Array = Geometry3D.get_closest_points_between_segments(
 		point3D, next_point3D,
 		# Vertical axis that cross the curve
-		Vector3(closest_point2D.x, -65536, closest_point2D.y), Vector3(closest_point2D.x, 65536, closest_point2D.y))
-	closest_point = close3D[0]
+		Vector3(closest2D.x, -65536, closest2D.y), Vector3(closest2D.x, 65536, closest2D.y))
 	
+	var closest_point: Vector3 = close3D[0]
 	return closest_point
 
 

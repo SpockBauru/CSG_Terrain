@@ -174,7 +174,7 @@ point_count = 8
 [sub_resource type="Curve3D" id="Curve3D_ufdbj"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, -0.772354, 40.6717, -1.83612, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 130.741, 85.3083, -0.34082, 0, 0, 0, 0, 0, 0, 180.48, 61.5598, 1.23727),
+"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 24.7651, 49.6535, 2.88669, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 130.741, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 180.48, 61.5598, 1.23727),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -318,7 +318,7 @@ script = ExtResource("3_ilwg2")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 243.488)
 curve = SubResource("Curve3D_ufdbj")
 script = ExtResource("3_ilwg2")
-width = 7
+width = 6
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain0"]
@@ -332,7 +332,7 @@ path_texture = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.035, -0.0156784, 246.642)
 curve = SubResource("Curve3D_ehi2r")
 script = ExtResource("3_ilwg2")
-width = 3
+width = 2
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain0"]
