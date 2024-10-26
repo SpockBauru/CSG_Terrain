@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=15 format=3 uid="uid://bq7gjmdsewwsx"]
+[gd_resource type="ShaderMaterial" load_steps=23 format=3 uid="uid://cnjdl01b58p1k"]
 
 [ext_resource type="Shader" path="res://addons/csg_terrain/csg_terrain_shader.gdshader" id="1_bsdbs"]
 
@@ -18,12 +18,36 @@ seamless = true
 color_ramp = SubResource("Gradient_yw5qy")
 noise = SubResource("FastNoiseLite_keaay")
 
+[sub_resource type="Gradient" id="Gradient_ackyp"]
+offsets = PackedFloat32Array(0.450292, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ne65t"]
+width = 1024
+height = 1024
+seamless = true
+as_normal_map = true
+bump_strength = 0.3
+color_ramp = SubResource("Gradient_ackyp")
+noise = SubResource("FastNoiseLite_keaay")
+
+[sub_resource type="Gradient" id="Gradient_iemce"]
+offsets = PackedFloat32Array(0.497076, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_djgq6"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_iemce")
+noise = SubResource("FastNoiseLite_keaay")
+
 [sub_resource type="Gradient" id="Gradient_w7o46"]
 offsets = PackedFloat32Array(0.00986842, 1)
 colors = PackedColorArray(0.39, 0.31538, 0.2808, 1, 0.57, 0.46398, 0.3648, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_7fr1y"]
-frequency = 0.0473
+frequency = 0.05
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hm7fw"]
 seamless = true
@@ -36,6 +60,7 @@ offsets = PackedFloat32Array(0.00986842, 1)
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kfijj"]
 seamless = true
 as_normal_map = true
+bump_strength = 2.0
 color_ramp = SubResource("Gradient_27rhl")
 noise = SubResource("FastNoiseLite_7fr1y")
 
@@ -53,12 +78,33 @@ colors = PackedColorArray(0.29, 0.279608, 0.2755, 1, 0.13, 0.123478, 0.1209, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_hlhu0"]
 noise_type = 2
-frequency = 0.3
+frequency = 0.05
 cellular_return_type = 0
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_087oy"]
 seamless = true
 color_ramp = SubResource("Gradient_55ulp")
+noise = SubResource("FastNoiseLite_hlhu0")
+
+[sub_resource type="Gradient" id="Gradient_c8e4w"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.368421, 1)
+colors = PackedColorArray(1, 0.949833, 0.93, 1, 0, 0, 0, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_h01li"]
+seamless = true
+as_normal_map = true
+color_ramp = SubResource("Gradient_c8e4w")
+noise = SubResource("FastNoiseLite_hlhu0")
+
+[sub_resource type="Gradient" id="Gradient_h1pj8"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.403509)
+colors = PackedColorArray(0.13, 0.123478, 0.1209, 1, 1, 0.964167, 0.95, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_38agk"]
+seamless = true
+color_ramp = SubResource("Gradient_h1pj8")
 noise = SubResource("FastNoiseLite_hlhu0")
 
 [resource]
@@ -70,12 +116,16 @@ shader_parameter/ground_color = Color(1, 1, 1, 1)
 shader_parameter/ground_normal_strenght = 1.0
 shader_parameter/ground_roughness = 1.0
 shader_parameter/ground_albedo = SubResource("NoiseTexture2D_hbuv8")
+shader_parameter/ground_normal_map = SubResource("NoiseTexture2D_ne65t")
+shader_parameter/ground_rough_map = SubResource("NoiseTexture2D_djgq6")
 shader_parameter/wall_strenght = 2.0
 shader_parameter/wall_scale = Vector2(0.01, 0.01)
 shader_parameter/wall_color = Color(1, 1, 1, 1)
-shader_parameter/wall_normal_strenght = 1.0
+shader_parameter/wall_normal_strenght = 1.1
 shader_parameter/wall_roughness = 1.0
 shader_parameter/wall_albedo = SubResource("NoiseTexture2D_087oy")
+shader_parameter/wall_normal_map = SubResource("NoiseTexture2D_h01li")
+shader_parameter/wall_rough_map = SubResource("NoiseTexture2D_38agk")
 shader_parameter/path_scale = Vector2(0.2, 0.2)
 shader_parameter/path_color = Color(1, 1, 1, 1)
 shader_parameter/path_normal_strenght = 1.0

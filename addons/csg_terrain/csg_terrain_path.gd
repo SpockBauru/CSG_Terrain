@@ -10,7 +10,7 @@ extends Path3D
 		curve_changed.emit()
 
 ## Amount of curvature around the path. Zero is flat.
-@export var smoothness: float = 1:
+@export var smoothness: float = 1.0:
 	set(value):
 		if value < 0: value = 0
 		smoothness = value
@@ -29,7 +29,7 @@ extends Path3D
 		curve_changed.emit()
 
 ## How strong the texture will merge with the terrain.
-@export var texture_smoothness: float = 1:
+@export var texture_smoothness: float = 1.0:
 	set(value):
 		if value < 0: value = 0
 		texture_smoothness = value

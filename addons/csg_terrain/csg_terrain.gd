@@ -1,7 +1,6 @@
 @tool
-extends CSGMesh3D
 class_name CSGTerrain
-
+extends CSGMesh3D
 
 signal remake_terrain
 
@@ -36,24 +35,17 @@ var vertex_grid: Array = []
 var uvs: PackedVector2Array = []
 var indices: PackedInt32Array = []
 
-# Mesh in ArrayMesh format
-var surface_array = []
-
 var path_list: Array[CSGTerrainPath] = []
 var textures = CSGTerrainTextures.new()
-var export = CSGTerrainExport.new()
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if not is_instance_valid(material):
+		material = load("res://addons/csg_terrain/csg_terrain_material.tres").duplicate()
+	
 	if not is_instance_valid(mesh):
 		mesh = ArrayMesh.new()
-	
-	if not is_instance_valid(material):
-		material = load("res://addons/csg_terrain/terrain_material.tres").duplicate()
-	
-	# Create mesh
-	surface_array.resize(Mesh.ARRAY_MAX)
 	
 	# Populate path list
 	path_list.clear()
@@ -71,6 +63,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if create_static_mesh == true:
 		create_static_mesh = false
+		var export = CSGTerrainExport.new()
 		export.create_mesh(self)
 
 
@@ -177,6 +170,9 @@ func create_mesh_arrays() -> void:
 
 
 func commit_mesh() -> void:
+	# Mesh in ArrayMesh format
+	var surface_array = []
+	surface_array.resize(Mesh.ARRAY_MAX)
 	surface_array[Mesh.ARRAY_TEX_UV] = uvs
 	surface_array[Mesh.ARRAY_TEX_UV2] = uvs
 	surface_array[Mesh.ARRAY_INDEX] = indices

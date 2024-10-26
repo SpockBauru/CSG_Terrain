@@ -1,7 +1,7 @@
-[gd_scene load_steps=45 format=3 uid="uid://chkqxcvavjgdb"]
+[gd_scene load_steps=53 format=3 uid="uid://chkqxcvavjgdb"]
 
-[ext_resource type="Shader" path="res://addons/csg_terrain/csg_terrain_shader.gdshader" id="1_ox3qg"]
-[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain_mesh.gd" id="2_a46uf"]
+[ext_resource type="Shader" path="res://addons/csg_terrain/csg_terrain_shader.gdshader" id="1_s1f7o"]
+[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain.gd" id="2_a46uf"]
 [ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain_path.gd" id="3_ilwg2"]
 
 [sub_resource type="Gradient" id="Gradient_m28ac"]
@@ -47,12 +47,36 @@ seamless = true
 color_ramp = SubResource("Gradient_yw5qy")
 noise = SubResource("FastNoiseLite_keaay")
 
+[sub_resource type="Gradient" id="Gradient_ackyp"]
+offsets = PackedFloat32Array(0.450292, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ne65t"]
+width = 1024
+height = 1024
+seamless = true
+as_normal_map = true
+bump_strength = 0.3
+color_ramp = SubResource("Gradient_ackyp")
+noise = SubResource("FastNoiseLite_keaay")
+
+[sub_resource type="Gradient" id="Gradient_iemce"]
+offsets = PackedFloat32Array(0.497076, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_djgq6"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_iemce")
+noise = SubResource("FastNoiseLite_keaay")
+
 [sub_resource type="Gradient" id="Gradient_w7o46"]
 offsets = PackedFloat32Array(0.00986842, 1)
 colors = PackedColorArray(0.39, 0.31538, 0.2808, 1, 0.57, 0.46398, 0.3648, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_7fr1y"]
-frequency = 0.0473
+frequency = 0.05
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hm7fw"]
 seamless = true
@@ -65,6 +89,7 @@ offsets = PackedFloat32Array(0.00986842, 1)
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kfijj"]
 seamless = true
 as_normal_map = true
+bump_strength = 2.0
 color_ramp = SubResource("Gradient_27rhl")
 noise = SubResource("FastNoiseLite_7fr1y")
 
@@ -82,7 +107,7 @@ colors = PackedColorArray(0.29, 0.279608, 0.2755, 1, 0.13, 0.123478, 0.1209, 1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_hlhu0"]
 noise_type = 2
-frequency = 0.3
+frequency = 0.05
 cellular_return_type = 0
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_087oy"]
@@ -90,21 +115,46 @@ seamless = true
 color_ramp = SubResource("Gradient_55ulp")
 noise = SubResource("FastNoiseLite_hlhu0")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g4fsg"]
+[sub_resource type="Gradient" id="Gradient_c8e4w"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.368421, 1)
+colors = PackedColorArray(1, 0.949833, 0.93, 1, 0, 0, 0, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_h01li"]
+seamless = true
+as_normal_map = true
+color_ramp = SubResource("Gradient_c8e4w")
+noise = SubResource("FastNoiseLite_hlhu0")
+
+[sub_resource type="Gradient" id="Gradient_h1pj8"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.403509)
+colors = PackedColorArray(0.13, 0.123478, 0.1209, 1, 1, 0.964167, 0.95, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_38agk"]
+seamless = true
+color_ramp = SubResource("Gradient_h1pj8")
+noise = SubResource("FastNoiseLite_hlhu0")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3dx15"]
 render_priority = 0
-shader = ExtResource("1_ox3qg")
-shader_parameter/ground_strenght = 5.0
+shader = ExtResource("1_s1f7o")
+shader_parameter/ground_strenght = 3.0
 shader_parameter/ground_scale = Vector2(0.01, 0.01)
 shader_parameter/ground_color = Color(1, 1, 1, 1)
 shader_parameter/ground_normal_strenght = 1.0
 shader_parameter/ground_roughness = 1.0
 shader_parameter/ground_albedo = SubResource("NoiseTexture2D_hbuv8")
-shader_parameter/wall_strenght = 4.0
+shader_parameter/ground_normal_map = SubResource("NoiseTexture2D_ne65t")
+shader_parameter/ground_rough_map = SubResource("NoiseTexture2D_djgq6")
+shader_parameter/wall_strenght = 2.0
 shader_parameter/wall_scale = Vector2(0.01, 0.01)
 shader_parameter/wall_color = Color(1, 1, 1, 1)
-shader_parameter/wall_normal_strenght = 1.0
+shader_parameter/wall_normal_strenght = 1.1
 shader_parameter/wall_roughness = 1.0
 shader_parameter/wall_albedo = SubResource("NoiseTexture2D_087oy")
+shader_parameter/wall_normal_map = SubResource("NoiseTexture2D_h01li")
+shader_parameter/wall_rough_map = SubResource("NoiseTexture2D_38agk")
 shader_parameter/path_scale = Vector2(0.2, 0.2)
 shader_parameter/path_color = Color(1, 1, 1, 1)
 shader_parameter/path_normal_strenght = 1.0
@@ -124,15 +174,7 @@ point_count = 8
 [sub_resource type="Curve3D" id="Curve3D_ufdbj"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, -11.0574, 40.6717, -38.6052, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 120.456, 85.3083, -37.1099, 0, 0, 0, 0, 0, 0, 170.871, 44.6143, -35.5318),
-"tilts": PackedFloat32Array(0, 0, 0)
-}
-point_count = 3
-
-[sub_resource type="Curve3D" id="Curve3D_ehi2r"]
-bake_interval = 8.0
-_data = {
-"points": PackedVector3Array(-15.4036, 0.330643, 0.689285, 15.4036, -0.330643, -0.689285, 169.169, 63.0921, -36.4613, 14.159, -1.78596, -1.61336, -14.159, 1.78596, 1.61336, 233.638, 42.1686, -39.8544, 0, 0, 0, 0, 0, 0, 294.94, 44.2601, -43.2145),
+"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, -0.772354, 40.6717, -1.83612, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 130.741, 85.3083, -0.34082, 0, 0, 0, 0, 0, 0, 180.48, 61.5598, 1.23727),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -140,7 +182,15 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_4s0qm"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 3.42889, 0, 1.25325, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 19.0525, -1.59489, 1.25325, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[sub_resource type="Curve3D" id="Curve3D_ehi2r"]
+bake_interval = 8.0
+_data = {
+"points": PackedVector3Array(-15.4036, 0.330643, 0.689285, 15.4036, -0.330643, -0.689285, 2.26068, 63.0921, -2.42079, -22.2062, 1.91051, -6.7131, 22.2062, -1.91051, 6.7131, 77.1087, 44.3207, -5.81389, -17.8026, -2.32695, 2.28882e-05, 17.8026, 2.32695, -2.28882e-05, 147.586, 48.9188, -9.1787),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -250,12 +300,13 @@ texture_filter = 5
 environment = SubResource("Environment_ra7ix")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.935444, -0.230032, 0.268383, 0, 0.759272, 0.650774, -0.353475, -0.608763, 0.710255, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -0.875465, 0.483282, 0, -0.483283, -0.875464, 0, 0, 0)
 shadow_enabled = true
 directional_shadow_max_distance = 300.0
 
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
-material = SubResource("ShaderMaterial_g4fsg")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -250, 0, -512)
+material = SubResource("ShaderMaterial_3dx15")
 script = ExtResource("2_a46uf")
 
 [node name="RoadPath" type="Path3D" parent="CSGTerrain0"]
@@ -264,59 +315,59 @@ curve = SubResource("Curve3D_hq5qw")
 script = ExtResource("3_ilwg2")
 
 [node name="Hill1" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 280)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 243.488)
 curve = SubResource("Curve3D_ufdbj")
 script = ExtResource("3_ilwg2")
 width = 7
-smoothness = 0.5
-path_texture = true
-
-[node name="Hill2" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 280)
-curve = SubResource("Curve3D_ehi2r")
-script = ExtResource("3_ilwg2")
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 293.131, 48.559, 235.696)
 curve = SubResource("Curve3D_4s0qm")
 script = ExtResource("3_ilwg2")
-width = 7
+width = 8
+path_texture = true
+
+[node name="Hill2" type="Path3D" parent="CSGTerrain0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.035, -0.0156784, 246.642)
+curve = SubResource("Curve3D_ehi2r")
+script = ExtResource("3_ilwg2")
+width = 3
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 244.173, 20.951, 241.054)
 operation = 2
 radius = 6.0
-height = 80.0
+height = 70.0
 sides = 6
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="BottomCut" type="CSGBox3D" parent="CSGTerrain0/TunnelHole"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.08541)
 operation = 2
-size = Vector3(12, 81, 7)
+size = Vector3(12, 71, 7)
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="Tunnel" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 244.173, 20.951, 241.054)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -5.827, 20.951, -270.946)
 use_collision = true
 radius = 6.0
-height = 80.0
+height = 70.0
 sides = 16
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="TunnelCut" type="CSGCylinder3D" parent="Tunnel"]
 operation = 2
 radius = 5.0
-height = 81.0
+height = 71.0
 sides = 16
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="BottomCut" type="CSGBox3D" parent="Tunnel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.08541)
 operation = 2
-size = Vector3(12, 81, 7)
+size = Vector3(12, 71, 7)
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="RoadPolygon" type="CSGPolygon3D" parent="."]
