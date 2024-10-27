@@ -1,8 +1,9 @@
 shader_type spatial;
 //render_mode cull_disabled;
 
+uniform float wall_underlay = 2.0;
+
 group_uniforms ground;
-uniform float ground_strenght = 3.0;
 uniform vec2 ground_scale = vec2(0.01, 0.01);
 uniform vec4 ground_color: source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform sampler2D ground_albedo : source_color, filter_linear_mipmap_anisotropic;
@@ -14,7 +15,6 @@ uniform float ground_roughness = 1.0;
 group_uniforms;
 
 group_uniforms Walls;
-uniform float wall_strenght = 2.0;
 uniform vec2 wall_scale = vec2(0.01, 0.01);
 uniform vec4 wall_color: source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform sampler2D wall_albedo : source_color, filter_linear_mipmap_anisotropic;
@@ -51,7 +51,7 @@ void vertex() {
 
 void fragment() {
 	// Blend between the two textures
-	float ground_blend = clamp((flatness * ground_strenght ) - wall_strenght , 0.0, 1.0);
+	float ground_blend = clamp((flatness * wall_underlay + 1.0 ) - wall_underlay , 0.0, 1.0);
 	float wall_blend = 1.0 - ground_blend;
 
 	// Triplanar position

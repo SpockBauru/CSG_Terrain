@@ -46,6 +46,16 @@ func _ready() -> void:
 	
 	if not is_instance_valid(mesh):
 		mesh = ArrayMesh.new()
+		var path: Path3D = Path3D.new()
+		path.name = "Path3D"
+		var curve: Curve3D = Curve3D.new()
+		curve.add_point(Vector3(256, 0, 216))
+		curve.add_point(Vector3(256, 35, 256))
+		curve.set_point_in(1 , Vector3(0, 0, -15))
+		curve.set_point_out(1 , Vector3(0, 0, 15))
+		path.curve = curve
+		add_child(path, true)
+		path.set_owner(get_tree().edited_scene_root)
 	
 	# Populate path list
 	path_list.clear()
