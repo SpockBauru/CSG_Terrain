@@ -1,8 +1,8 @@
-[gd_scene load_steps=53 format=3 uid="uid://chkqxcvavjgdb"]
+[gd_scene load_steps=54 format=3 uid="uid://chkqxcvavjgdb"]
 
-[ext_resource type="Shader" path="res://addons/csg_terrain/csg_terrain_shader.gdshader" id="1_2be6p"]
-[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain.gd" id="2_a46uf"]
-[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain_path.gd" id="3_ilwg2"]
+[ext_resource type="Shader" path="res://addons/csg_terrain/csg_terrain_shader.gdshader" id="1_wbcsn"]
+[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain.gd" id="2_58mqj"]
+[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain_path.gd" id="3_0dgdk"]
 
 [sub_resource type="Gradient" id="Gradient_m28ac"]
 offsets = PackedFloat32Array(0.209459, 1)
@@ -30,6 +30,8 @@ sky_material = SubResource("ProceduralSkyMaterial_kqtnn")
 [sub_resource type="Environment" id="Environment_ra7ix"]
 background_mode = 2
 sky = SubResource("Sky_h35h7")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ohsyd"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 interpolation_mode = 2
@@ -132,7 +134,7 @@ noise = SubResource("FastNoiseLite_hlhu0")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sjpm0"]
 render_priority = 0
-shader = ExtResource("1_2be6p")
+shader = ExtResource("1_wbcsn")
 shader_parameter/wall_underlay = 4.0
 shader_parameter/ground_scale = Vector2(0.02, 0.02)
 shader_parameter/ground_color = Color(1, 1, 1, 1)
@@ -175,7 +177,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_4s0qm"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 19.0525, -1.59489, 1.25325, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 39.0461, -1.59489, 1.25323, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -183,7 +185,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_ehi2r"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(-15.4036, 0.330643, 0.689285, 15.4036, -0.330643, -0.689285, 2.26068, 63.0921, -2.42079, -22.2062, 1.91051, -6.7131, 22.2062, -1.91051, 6.7131, 77.1087, 44.3207, -5.81389, -17.8026, -2.32695, 2.28882e-05, 17.8026, 2.32695, -2.28882e-05, 147.586, 48.9188, -9.1787),
+"points": PackedVector3Array(-12.4126, 4.662, 0.68927, 12.4126, -4.662, -0.68927, 13.7352, 63.9476, -1.55478, -16.2406, -0.23962, 1.59213, 16.2406, 0.23962, -1.59213, 77.1087, 45.1031, -3.44528, -16.5401, -5.61719, 1.05896, 16.5401, 5.61719, -1.05896, 167.937, 62.6753, -9.17871),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -299,33 +301,35 @@ directional_shadow_max_distance = 300.0
 
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -250, 0, -512)
+mesh = SubResource("ArrayMesh_ohsyd")
 material = SubResource("ShaderMaterial_sjpm0")
-script = ExtResource("2_a46uf")
+script = ExtResource("2_58mqj")
 
 [node name="RoadPath" type="Path3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.518, 0, 532.66)
 curve = SubResource("Curve3D_hq5qw")
-script = ExtResource("3_ilwg2")
+script = ExtResource("3_0dgdk")
+texture_width = 0
 
 [node name="Hill1" type="Path3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 243.488)
 curve = SubResource("Curve3D_ufdbj")
-script = ExtResource("3_ilwg2")
-width = 5
+script = ExtResource("3_0dgdk")
+width = 6
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 293.131, 48.559, 235.696)
 curve = SubResource("Curve3D_4s0qm")
-script = ExtResource("3_ilwg2")
-width = 8
+script = ExtResource("3_0dgdk")
+width = 6
 path_texture = true
 
 [node name="Hill2" type="Path3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.035, -0.0156784, 246.642)
 curve = SubResource("Curve3D_ehi2r")
-script = ExtResource("3_ilwg2")
-width = 2
+script = ExtResource("3_0dgdk")
+width = 3
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain0"]
