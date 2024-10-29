@@ -31,7 +31,7 @@ sky_material = SubResource("ProceduralSkyMaterial_kqtnn")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_ohsyd"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_a2kvg"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 interpolation_mode = 2
@@ -161,7 +161,7 @@ shader_parameter/path_rough_map = SubResource("NoiseTexture2D_ykkun")
 [sub_resource type="Curve3D" id="Curve3D_hq5qw"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, -15.5843, 0, 27.2537, 15.5843, 0, -27.2537, 78.803, 15, -129.248, -5.69968, 0, 14.8391, 5.69968, 0, -14.8391, 121.577, 20, -192.895, 0, 0, 0, 0, 0, 0, 132.845, 20, -237.04, 0, 0, 0, 0, 0, 0, 132.802, 20, -342.573, 15.1272, 0, 12.2181, -15.1272, 0, -12.2181, 112.969, 18.9863, -379.946, 16.951, 0, 24.6631, -16.951, 0, -24.6631, 59.602, 15, -426.553, 0, 0, 0, 0, 0, 0, 18.5627, 0, -547),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, -15.5843, 0, 27.2537, 15.5843, 0, -27.2537, 78.803, 5, -129.248, -5.69968, 0, 14.8391, 5.69968, 0, -14.8391, 121.577, 10, -192.895, 0, 0, 0, 0, 0, 0, 132.957, 10, -237.04, 0, 0, 0, 0, 0, 0, 133.026, 10, -342.573, 15.1272, 0, 12.2181, -15.1272, 0, -12.2181, 112.969, 10, -379.946, 16.951, 0, 24.6631, -16.951, 0, -24.6631, 59.602, 5, -426.553, 0, 0, 0, 0, 0, 0, 18.5627, 0, -547),
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0)
 }
 point_count = 8
@@ -169,7 +169,7 @@ point_count = 8
 [sub_resource type="Curve3D" id="Curve3D_ufdbj"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 24.7651, 49.6535, 2.88669, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 130.741, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 180.48, 61.5598, 1.23727),
+"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 24.7651, 49.6535, 2.88669, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 107.406, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 179.635, 63.8275, 1.23727),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -177,7 +177,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_4s0qm"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 39.0461, -1.59489, 1.25323, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 40.6051, 14.1373, 1.25323, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -185,7 +185,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_ehi2r"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(-12.4126, 4.662, 0.68927, 12.4126, -4.662, -0.68927, 13.7352, 63.9476, -1.55478, -16.2406, -0.23962, 1.59213, 16.2406, 0.23962, -1.59213, 77.1087, 45.1031, -3.44528, -16.5401, -5.61719, 1.05896, 16.5401, 5.61719, -1.05896, 167.937, 62.6753, -9.17871),
+"points": PackedVector3Array(-12.4126, 4.662, 0.68927, 12.4126, -4.662, -0.68927, 13.7352, 63.9476, -1.55478, -16.2406, -0.23962, 1.59213, 16.2406, 0.23962, -1.59213, 77.1087, 45.1031, -6.66739, -16.5401, -5.61719, 1.05896, 16.5401, 5.61719, -1.05896, 167.937, 62.6753, -9.17871),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -301,7 +301,7 @@ directional_shadow_max_distance = 300.0
 
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -250, 0, -512)
-mesh = SubResource("ArrayMesh_ohsyd")
+mesh = SubResource("ArrayMesh_a2kvg")
 material = SubResource("ShaderMaterial_sjpm0")
 script = ExtResource("2_58mqj")
 
@@ -309,13 +309,12 @@ script = ExtResource("2_58mqj")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.518, 0, 532.66)
 curve = SubResource("Curve3D_hq5qw")
 script = ExtResource("3_0dgdk")
-texture_width = 0
 
 [node name="Hill1" type="Path3D" parent="CSGTerrain0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 243.488)
 curve = SubResource("Curve3D_ufdbj")
 script = ExtResource("3_0dgdk")
-width = 6
+width = 8
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain0"]
@@ -329,11 +328,10 @@ path_texture = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.035, -0.0156784, 246.642)
 curve = SubResource("Curve3D_ehi2r")
 script = ExtResource("3_0dgdk")
-width = 3
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 244.173, 20.951, 241.054)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 244.517, 10.9277, 241.054)
 operation = 2
 radius = 6.0
 height = 70.0
@@ -347,7 +345,7 @@ size = Vector3(12, 71, 7)
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="Tunnel" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -5.827, 20.951, -270.946)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -5.48308, 10.9277, -270.946)
 use_collision = true
 radius = 6.0
 height = 70.0

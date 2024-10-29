@@ -34,12 +34,14 @@ uniform float path_roughness = 1.0;
 uniform sampler2D path_mask: filter_linear;
 group_uniforms;
 
-varying float flatness;
+varying float wall_blend;
 varying vec3 pos_vertex;
 varying vec3 pos_normal;
 
 void vertex() {
-	flatness = dot(NORMAL, vec3(0.0, 1.0, 0.0));
+	float flatness = dot(NORMAL, vec3(0.0, 1.0, 0.0));
+	wall_blend = mix(wall_underlay, 0.0, flatness);
+	wall_blend = clamp(wall_blend, 0.0, 1.0);
 	
 	// Triplanar map from mohsen zare youtube: https://www.youtube.com/watch?v=YwnVl2YHXBc
 	pos_vertex = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
@@ -48,9 +50,8 @@ void vertex() {
 
 void fragment() {
 	// Blend values between textures
-	float ground_blend = clamp((flatness * wall_underlay + 1.0 ) - wall_underlay , 0.0, 1.0);
-	float wall_blend = 1.0 - ground_blend;
 	float path_blend = texture(path_mask, UV).r;
+	float ground_blend = 1.0 - wall_blend;
 	
 	// Triplanar position
 	vec2 uv = mix(pos_vertex.xy, pos_vertex.zy, round(pos_normal.x));

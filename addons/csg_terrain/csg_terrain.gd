@@ -38,6 +38,7 @@ var indices: PackedInt32Array = []
 var path_list: Array[CSGTerrainPath] = []
 var textures = CSGTerrainTextures.new()
 
+var is_updating: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -239,10 +240,21 @@ func commit_mesh() -> void:
 
 
 func update_mesh() -> void:
+	if is_updating == true:
+		return
+	is_updating = true
+	
 	create_mesh_arrays()
 	for path in path_list:
+		if path.curve.bake_interval != size / divs:
+			path.curve_changed.disconnect(update_mesh)
+			path.curve.bake_interval = size / divs
+			path.curve_changed.connect(update_mesh)
 		follow_curve(path)
 	commit_mesh()
+	
+	await get_tree().process_frame
+	is_updating = false
 
 
 func follow_curve(path: CSGTerrainPath) -> void:
@@ -251,12 +263,20 @@ func follow_curve(path: CSGTerrainPath) -> void:
 	
 	var pos: Vector3 = path.position
 	var curve: Curve3D = path.curve
-	var points: PackedVector3Array = curve.get_baked_points()
+	var baked3D: PackedVector3Array = curve.get_baked_points()
 	
-	if points.size() < 2: return
-	# Dictionary with vertices around the curve by witdh size
+	if baked3D.size() < 2: return
+	
+	# Make a curve on xz plane
+	var baked2D: Array[Vector2] = []
+	baked2D.resize(baked3D.size())
+	for i in range(baked3D.size()):
+		var point: Vector3 = baked3D[i]
+		baked2D[i] = Vector2(point.x, point.z)
+	
+	# Dictionary with vertices around the curve by "witdh" size
 	var curve_vertices = {}
-	for point in points:
+	for point in baked3D:
 		var local_point: Vector3 = point + pos
 		
 		# Point in the vertex_grid
@@ -277,13 +297,6 @@ func follow_curve(path: CSGTerrainPath) -> void:
 			for j in range(range_min_y, range_max_y):
 				curve_vertices[Vector2i(i, j)] = true
 	
-	# Make a curve on xz plane
-	var points2D: Array[Vector2] = []
-	points2D.resize(points.size())
-	for i in range(points.size()):
-		var point: Vector3 = points[i]
-		points2D[i] = Vector2(point.x, point.z)
-	
 	# Interpolate the height of the vertices
 	for grid_idx in curve_vertices:
 		var vertex: Vector3 = vertex_grid[grid_idx.x][grid_idx.y]
@@ -291,7 +304,7 @@ func follow_curve(path: CSGTerrainPath) -> void:
 		
 		# Vertex in path space
 		var path_vertex: Vector3 = vertex - pos
-		var closest: Vector3 = get_closest_point_in_xz_plane(points2D, points, path_vertex)
+		var closest: Vector3 = get_closest_point_in_xz_plane(baked2D, baked3D, path_vertex)
 		
 		# Back to local space
 		closest += pos
