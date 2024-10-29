@@ -31,7 +31,7 @@ sky_material = SubResource("ProceduralSkyMaterial_kqtnn")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_a2kvg"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_8f3bl"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 interpolation_mode = 2
@@ -169,7 +169,7 @@ point_count = 8
 [sub_resource type="Curve3D" id="Curve3D_ufdbj"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 24.7651, 49.6535, 2.88669, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 107.406, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 179.635, 63.8275, 1.23727),
+"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 24.7651, 49.6535, 6.37123, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 108.234, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 179.635, 63.8275, 1.71837),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -177,7 +177,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_4s0qm"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 40.6051, 14.1373, 1.25323, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 215.21, -13.3769, 0.671432),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 40.6051, 14.1373, 1.25323, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 163.397, -13.3769, 0.671417),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -185,7 +185,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_ehi2r"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(-12.4126, 4.662, 0.68927, 12.4126, -4.662, -0.68927, 13.7352, 63.9476, -1.55478, -16.2406, -0.23962, 1.59213, 16.2406, 0.23962, -1.59213, 77.1087, 45.1031, -6.66739, -16.5401, -5.61719, 1.05896, 16.5401, 5.61719, -1.05896, 167.937, 62.6753, -9.17871),
+"points": PackedVector3Array(-12.4126, 4.662, 0.68927, 12.4126, -4.662, -0.68927, 13.7352, 63.9476, -1.55478, -16.2406, -0.23962, 1.59213, 16.2406, 0.23962, -1.59213, 77.1087, 45.679, -6.66739, -16.5401, -5.61719, 1.05896, 16.5401, 5.61719, -1.05896, 167.937, 62.6753, -9.17871),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -300,38 +300,38 @@ shadow_enabled = true
 directional_shadow_max_distance = 300.0
 
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -250, 0, -512)
-mesh = SubResource("ArrayMesh_a2kvg")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
+mesh = SubResource("ArrayMesh_8f3bl")
 material = SubResource("ShaderMaterial_sjpm0")
 script = ExtResource("2_58mqj")
 
 [node name="RoadPath" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.518, 0, 532.66)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -119.878, 0, 268.582)
 curve = SubResource("Curve3D_hq5qw")
 script = ExtResource("3_0dgdk")
 
 [node name="Hill1" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.510178, -0.0156784, 243.488)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.886, -0.0156784, -20.5899)
 curve = SubResource("Curve3D_ufdbj")
 script = ExtResource("3_0dgdk")
 width = 8
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 293.131, 48.559, 235.696)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.7352, 48.559, -28.3819)
 curve = SubResource("Curve3D_4s0qm")
 script = ExtResource("3_0dgdk")
 width = 6
 path_texture = true
 
 [node name="Hill2" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.035, -0.0156784, 246.642)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.3608, -0.0156784, -17.4359)
 curve = SubResource("Curve3D_ehi2r")
 script = ExtResource("3_0dgdk")
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 244.517, 10.9277, 241.054)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 13.1212, 10.9277, -23.0239)
 operation = 2
 radius = 6.0
 height = 70.0
@@ -345,7 +345,7 @@ size = Vector3(12, 71, 7)
 material = SubResource("StandardMaterial3D_5q2gm")
 
 [node name="Tunnel" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -5.48308, 10.9277, -270.946)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 13.121, 10.928, -279.024)
 use_collision = true
 radius = 6.0
 height = 70.0

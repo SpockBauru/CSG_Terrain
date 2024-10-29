@@ -62,13 +62,14 @@ func _ready() -> void:
 	path_list.clear()
 	for child in get_children():
 		_child_entered(child)
-	update_mesh()
 	
 	# Signals
 	remake_terrain.connect(update_mesh)
 	child_entered_tree.connect(_child_entered)
 	child_exiting_tree.connect(_child_exit)
 	child_order_changed.connect(_child_order_changed)
+	
+	update_mesh()
 
 
 func _process(_delta: float) -> void:
@@ -76,7 +77,6 @@ func _process(_delta: float) -> void:
 		create_static_mesh = false
 		var export = CSGTerrainExport.new()
 		export.create_mesh(self)
-	#update_mesh()
 
 
 func _child_entered(child) -> void:
@@ -142,13 +142,13 @@ func create_mesh_arrays() -> void:
 	vertex_grid.resize(divs + 1)
 	
 	# apply scale
-	var step = size / divs
-	
+	var step: float = size / divs
+	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)
 	for x in range(divs + 1):
 		var vertices_z: PackedVector3Array = []
 		vertices_z.resize(divs + 1)
 		for z in range(divs + 1):
-			vertices_z[z] = Vector3(x * step, 0, z * step)
+			vertices_z[z] = Vector3(x * step, 0, z * step) - center
 		vertex_grid[x] = vertices_z
 	
 	# Make uvs
@@ -247,6 +247,7 @@ func update_mesh() -> void:
 	create_mesh_arrays()
 	for path in path_list:
 		if path.curve.bake_interval != size / divs:
+			print("cuve bake interval")
 			path.curve_changed.disconnect(update_mesh)
 			path.curve.bake_interval = size / divs
 			path.curve_changed.connect(update_mesh)
@@ -262,6 +263,7 @@ func follow_curve(path: CSGTerrainPath) -> void:
 	var smoothness: float = path.smoothness
 	
 	var pos: Vector3 = path.position
+	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)
 	var curve: Curve3D = path.curve
 	var baked3D: PackedVector3Array = curve.get_baked_points()
 	
@@ -277,7 +279,7 @@ func follow_curve(path: CSGTerrainPath) -> void:
 	# Dictionary with vertices around the curve by "witdh" size
 	var curve_vertices = {}
 	for point in baked3D:
-		var local_point: Vector3 = point + pos
+		var local_point: Vector3 = point + pos + center
 		
 		# Point in the vertex_grid
 		var grid_point: Vector3 = local_point * divs / size

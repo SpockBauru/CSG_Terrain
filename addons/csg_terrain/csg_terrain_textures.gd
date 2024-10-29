@@ -23,6 +23,7 @@ func apply_path_mask(data: PackedByteArray, path: CSGTerrainPath, mask_size: int
 	var texture_width: int = path.texture_width
 	var texture_smoothness: float = path.texture_smoothness
 	var pos: Vector3 = path.position
+	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)
 	
 	var points_checked = {}
 	
@@ -33,7 +34,7 @@ func apply_path_mask(data: PackedByteArray, path: CSGTerrainPath, mask_size: int
 	for idx in path.curve.point_count:
 		var point3D = path.curve.get_point_position(idx)
 		# From path space to local space
-		var localPoint: Vector3 = point3D + pos
+		var localPoint: Vector3 = point3D + pos + center
 		# From local space to UV space
 		localPoint = localPoint / size
 		# From UV space to pixel space
