@@ -31,7 +31,7 @@ sky_material = SubResource("ProceduralSkyMaterial_kqtnn")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_8f3bl"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_p1n8d"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 interpolation_mode = 2
@@ -301,7 +301,7 @@ directional_shadow_max_distance = 300.0
 
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
-mesh = SubResource("ArrayMesh_8f3bl")
+mesh = SubResource("ArrayMesh_p1n8d")
 material = SubResource("ShaderMaterial_sjpm0")
 script = ExtResource("2_58mqj")
 

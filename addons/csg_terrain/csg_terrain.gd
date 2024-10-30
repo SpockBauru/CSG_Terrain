@@ -2,8 +2,6 @@
 class_name CSGTerrain
 extends CSGMesh3D
 
-signal remake_terrain
-
 ## Size of each side of the square.
 @export var size: float = 512:
 	set(value):
@@ -64,7 +62,6 @@ func _ready() -> void:
 		_child_entered(child)
 	
 	# Signals
-	remake_terrain.connect(update_mesh)
 	child_entered_tree.connect(_child_entered)
 	child_exiting_tree.connect(_child_exit)
 	child_order_changed.connect(_child_order_changed)
@@ -82,22 +79,25 @@ func _process(_delta: float) -> void:
 func _child_entered(child) -> void:
 	if child is Path3D:
 		child = child as Path3D
+		path_list.append(child)
+		
 		if not is_instance_of(child, CSGTerrainPath):
 			child.set_script(CSGTerrainPath)
 			child.curve.bake_interval = size / divs
-		path_list.append(child)
+		
 		if not child.curve_changed.is_connected(update_mesh):
 			child.curve_changed.connect(update_mesh)
 
 
 func _child_exit(child) -> void:
 	if child is Path3D:
-		if child.curve_changed.is_connected(update_mesh):
-			child.curve_changed.disconnect(update_mesh)
 		var index: int = path_list.find(child)
 		path_list.remove_at(index)
-		if not NOTIFICATION_EXIT_TREE:
-			update_mesh()
+		
+		if child.curve_changed.is_connected(update_mesh):
+			child.curve_changed.disconnect(update_mesh)
+		
+		update_mesh()
 
 
 func _child_order_changed() -> void:
@@ -109,35 +109,33 @@ func _child_order_changed() -> void:
 
 func _size_changed(old_size: float) -> void:
 	for path in path_list:
-		path.curve_changed.disconnect(update_mesh)
 		var new_width = path.width * old_size / size
 		path.width = int(new_width)
+		
 		var new_texture_width = path.texture_width * old_size / size
 		path.texture_width = int(new_texture_width)
-		path.curve_changed.connect(update_mesh)
+	
 	update_mesh()
 
 
 func _divs_changed(old_divs: int) -> void:
 	for path in path_list:
-		path.curve_changed.disconnect(update_mesh)
 		var new_width: float = path.width * float(divs) / old_divs
 		path.width = int(new_width)
-		path.curve_changed.connect(update_mesh)
+	
 	update_mesh()
 
 
 func _resolution_changed(old_resolution) -> void:
 	for path in path_list:
-		path.curve_changed.disconnect(update_mesh)
 		var new_texture_width = path.texture_width * path_mask_resolution / old_resolution
 		path.texture_width = int(new_texture_width)
-		path.curve_changed.connect(update_mesh)
+	
 	update_mesh()
 
 
 func create_mesh_arrays() -> void:
-	# Vertex Grid follow the pattern [x][z]. This will important for triangle generation.
+	# Vertex Grid follow the pattern [x][z]. The y axis is what will follow the curves
 	vertex_grid.clear()
 	vertex_grid.resize(divs + 1)
 	
@@ -161,7 +159,7 @@ func create_mesh_arrays() -> void:
 			uvs[index] = Vector2(x * uv_step, z * uv_step)
 			index += 1
 	
-	# Make faces with two triangles
+	# Make quads with two triangles
 	indices.clear()
 	indices.resize(divs * divs * 6)
 	var row: int = 0
@@ -171,6 +169,7 @@ func create_mesh_arrays() -> void:
 		row = next_row
 		next_row += divs + 1
 		
+		# Making the two triangles. Ways to make more readable are welcomed.
 		for z in range(divs):
 			# First triangle vertices
 			indices[index] = z + row
@@ -240,20 +239,24 @@ func commit_mesh() -> void:
 
 
 func update_mesh() -> void:
+	# Block if alredy received an update request on the current frame
 	if is_updating == true:
 		return
 	is_updating = true
 	
+	# Recrieate all mesh arrays. seems expensive but is the last of our problems.
 	create_mesh_arrays()
+	
+	# Make the mesh follow each path, in tree order. 90% of the time is spent here.
 	for path in path_list:
 		if path.curve.bake_interval != size / divs:
-			print("cuve bake interval")
-			path.curve_changed.disconnect(update_mesh)
 			path.curve.bake_interval = size / divs
-			path.curve_changed.connect(update_mesh)
 		follow_curve(path)
+	
+	# Organize all the mesh at once. Again, seems expensive but is not an issue.
 	commit_mesh()
 	
+	# Wait until next frame to recieve more update requests
 	await get_tree().process_frame
 	is_updating = false
 
@@ -329,7 +332,7 @@ func follow_curve(path: CSGTerrainPath) -> void:
 	for grid_idx in curve_vertices:
 		update_quad_indices(grid_idx)
 
-
+# Get the closest point on the 3D curve given a point on the xz plane. Really expensive, takes 80% of all time!
 func get_closest_point_in_xz_plane(points_2D: Array[Vector2], points_3D: Array[Vector3], vertex3D: Vector3) -> Vector3:
 	var vertex2D = Vector2(vertex3D.x, vertex3D.z)
 	var closest2D: Vector2 = Vector2.ZERO
@@ -341,6 +344,7 @@ func get_closest_point_in_xz_plane(points_2D: Array[Vector2], points_3D: Array[V
 		var point2D: Vector2 = points_2D[i]
 		var next_point2D: Vector2 = points_2D[i + 1]
 		
+		# The reason why this methos is so expensive, this function is made by brute force on Godot code!
 		var closest: Vector2 = Geometry2D.get_closest_point_to_segment(vertex2D, point2D, next_point2D)
 		var dist = closest.distance_squared_to(vertex2D)
 		
