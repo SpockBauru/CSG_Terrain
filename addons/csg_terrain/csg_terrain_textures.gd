@@ -1,10 +1,8 @@
-@tool
 class_name CSGTerrainTextures
-extends RefCounted
 
 var mask: Image = Image.new()
 
-func apply_textures(path_list: Array[CSGTerrainPath], mask_size: int, size: float,  material: Material) -> void:
+func apply_textures(material: Material, path_list: Array[CSGTerrainPath], mask_size: int, size: float) -> void:
 	if path_list.size() <= 0: 
 		return
 	

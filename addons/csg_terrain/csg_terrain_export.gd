@@ -1,5 +1,5 @@
+# Still in development. Does not work properly :'(
 class_name CSGTerrainExport
-extends RefCounted
 
 func create_mesh(csg_mesh: CSGMesh3D) -> void:
 	# Creating a meshArray

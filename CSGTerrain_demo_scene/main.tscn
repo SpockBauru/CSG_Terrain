@@ -31,7 +31,7 @@ sky_material = SubResource("ProceduralSkyMaterial_kqtnn")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_p1n8d"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_yhwus"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 interpolation_mode = 2
@@ -169,7 +169,7 @@ point_count = 8
 [sub_resource type="Curve3D" id="Curve3D_ufdbj"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 24.7651, 49.6535, 6.37123, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 108.234, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 179.635, 63.8275, 1.71837),
+"points": PackedVector3Array(6.67796, 0, 7.61834, 0, 0, 0, 0, 49.653, 0, -34.5573, 3.07465, 0, 34.5573, -3.07465, 0, 108.234, 85.3083, 1.17407, 0, 0, 0, 0, 0, 0, 179.635, 63.8275, 1.71837),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -177,7 +177,7 @@ point_count = 3
 [sub_resource type="Curve3D" id="Curve3D_4s0qm"]
 bake_interval = 8.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 40.6051, 14.1373, 1.25323, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 93.8687, 31.441, 0.304382, 0, 0, 0, 0, 0, 0, 163.397, -13.3769, 0.671417),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 14.137, 0, -21.5173, -0.0854492, 0.847855, 21.5173, 0.0854492, -0.847855, 48.1878, 31.441, -0.882141, 0, 0, 0, 0, 0, 0, 118.903, -13.3769, -0.515106),
 "tilts": PackedFloat32Array(0, 0, 0)
 }
 point_count = 3
@@ -301,7 +301,7 @@ directional_shadow_max_distance = 300.0
 
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
-mesh = SubResource("ArrayMesh_p1n8d")
+mesh = SubResource("ArrayMesh_yhwus")
 material = SubResource("ShaderMaterial_sjpm0")
 script = ExtResource("2_58mqj")
 
@@ -318,7 +318,7 @@ width = 8
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.7352, 48.559, -28.3819)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 102.964, 48.559, -26.7328)
 curve = SubResource("Curve3D_4s0qm")
 script = ExtResource("3_0dgdk")
 width = 6
