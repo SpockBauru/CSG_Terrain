@@ -31,7 +31,7 @@ sky_material = SubResource("ProceduralSkyMaterial_kqtnn")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_yhwus"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_y1p68"]
 
 [sub_resource type="Gradient" id="Gradient_yw5qy"]
 interpolation_mode = 2
@@ -299,9 +299,12 @@ transform = Transform3D(1, 0, 0, 0, -0.875465, 0.483282, 0, -0.483283, -0.875464
 shadow_enabled = true
 directional_shadow_max_distance = 300.0
 
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.984808, 0.0593912, -0.163176, 0, 0.939693, 0.34202, 0.173648, 0.336824, -0.925416, -96, 18, -490)
+
 [node name="CSGTerrain0" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
-mesh = SubResource("ArrayMesh_yhwus")
+mesh = SubResource("ArrayMesh_y1p68")
 material = SubResource("ShaderMaterial_sjpm0")
 script = ExtResource("2_58mqj")
 

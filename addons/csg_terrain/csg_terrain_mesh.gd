@@ -15,8 +15,8 @@ func update_mesh(mesh: ArrayMesh, path_list: Array[CSGTerrainPath], divs: int, s
 	
 	# Make the mesh follow each path, in tree order. 90% of the time is spent here.
 	for path in path_list:
-		if path.curve.bake_interval != size / divs:
-			path.curve.bake_interval = size / divs
+		if path.curve.bake_interval != (size / divs):
+			path.curve.bake_interval = (size / divs)
 		follow_curve(path, divs, size)
 	
 	# Organize all the mesh at once. Again, seems expensive but is not an issue.
