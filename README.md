@@ -1,3 +1,5 @@
+# WARNING: This is early code still in development, do NOT use in any project
+
 # CSG Terrain
 > ### Prototype your terrain faster with the power of curves and [CSG nodes](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html)
 
