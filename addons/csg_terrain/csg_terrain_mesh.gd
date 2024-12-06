@@ -20,7 +20,7 @@ func update_mesh(mesh: ArrayMesh, path_list: Array[CSGTerrainPath], divs: int, s
 		follow_curve(path, divs, size)
 	
 	# Organize all the mesh at once. Again, seems expensive but is not an issue.
-	commit_mesh(divs, mesh)
+	commit_mesh(size, divs, mesh)
 
 
 func create_mesh_arrays(divs: int, size: float) -> void:
@@ -76,7 +76,7 @@ func create_mesh_arrays(divs: int, size: float) -> void:
 			index += 1
 
 
-func commit_mesh(divs: int, mesh: ArrayMesh) -> void:
+func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	# Mesh in ArrayMesh format
 	var surface_array = []
 	surface_array.resize(Mesh.ARRAY_MAX)
@@ -120,6 +120,9 @@ func commit_mesh(divs: int, mesh: ArrayMesh) -> void:
 		normals[i] = normals[i].normalized()
 	
 	surface_array[Mesh.ARRAY_NORMAL] = normals
+	
+	# Closing the shape because Godot 4.4 dev6 don't accept CSG planes...
+	close_shape(size, divs, surface_array)
 	
 	#Commit to the main mash
 	mesh.clear_surfaces()
@@ -196,6 +199,7 @@ func follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 	# Update indices on affected vertices
 	for grid_idx in curve_vertices:
 		update_quad_indices(grid_idx, divs)
+
 
 # Get the closest point on the 3D curve given a point on the xz plane. Really expensive, takes 80% of all time!
 func get_closest_point_in_xz_plane(points_2D: Array[Vector2], points_3D: Array[Vector3], vertex3D: Vector3) -> Vector3:
@@ -275,3 +279,90 @@ func update_quad_indices(idx: Vector2i, divs: int) -> void:
 		indices[index] = z + row + 1
 		index += 1
 		indices[index] = z + row
+
+
+# CSG meshes must be closed in Godot 4.4 dev6. I'm not a fan of the change...
+# Making a cube bellow the tarrain
+func close_shape(size: float, divs: int, surface_array: Array):
+	# Add vertices of the bottom quad
+	var vert_list: PackedVector3Array = surface_array[Mesh.ARRAY_VERTEX]
+	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)
+	
+	var vertex: Vector3 = Vector3(0, -size, 0) - center
+	vert_list.append(vertex)
+	vertex = Vector3(0, -size, size) - center
+	vert_list.append(vertex)
+	vertex = Vector3(size, -size, 0 ) - center
+	vert_list.append(vertex)
+	vertex = Vector3(size, -size, size) - center
+	vert_list.append(vertex)
+	
+	surface_array[Mesh.ARRAY_VERTEX] = vert_list
+	
+	# Add indices of the bottom quad
+	var index = (divs + 1) * (divs + 1)
+	indices.append(index)
+	indices.append(index + 1)
+	indices.append(index + 3)
+	indices.append(index)
+	indices.append(index + 3)
+	indices.append(index + 2)
+	
+	# Connect indices from terrain plane with bottom quad
+	for i in range(divs):
+		var left = i
+		indices.append(left)
+		indices.append(left + 1)
+		indices.append(index)
+		
+		var right = i + divs * (divs + 1)
+		indices.append(right + 1)
+		indices.append(right)
+		indices.append(index + 3)
+		
+		var up = divs * i + i
+		indices.append(up + divs + 1)
+		indices.append(up)
+		indices.append(index + 2)
+		
+		var down = divs + (divs + 1) * i
+		indices.append(down)
+		indices.append(down + divs + 1)
+		indices.append(index + 1)
+	
+	# Fill last triangle for each side
+	# Left
+	indices.append(index + 1)
+	indices.append(index)
+	indices.append(divs)
+	# Right
+	indices.append(index + 2)
+	indices.append(index + 3)
+	indices.append(divs * (divs + 1))
+	# Top
+	indices.append(index)
+	indices.append(index + 2)
+	indices.append(0)
+	# Down
+	indices.append(index + 3)
+	indices.append(index + 1)
+	indices.append((divs) * (divs + 1) + divs)
+	
+	surface_array[Mesh.ARRAY_INDEX] = indices
+	
+	# Add uvs
+	uvs.append(Vector2(0,0))
+	uvs.append(Vector2(0,1))
+	uvs.append(Vector2(1,0))
+	uvs.append(Vector2(1,1))
+	surface_array[Mesh.ARRAY_TEX_UV] = uvs
+	surface_array[Mesh.ARRAY_TEX_UV2] = uvs
+	
+	# Add Normals
+	var normals: PackedVector3Array = surface_array[Mesh.ARRAY_NORMAL]
+	normals.append(Vector3.UP)
+	normals.append(Vector3.UP)
+	normals.append(Vector3.UP)
+	normals.append(Vector3.UP)
+	
+	surface_array[Mesh.ARRAY_NORMAL] = normals
