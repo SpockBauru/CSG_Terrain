@@ -46,7 +46,7 @@ func _ready() -> void:
 	
 	# Instantiate material if it's empty
 	if not is_instance_valid(material):
-		material = load("res://addons/csg_terrain/csg_terrain_material.tres").duplicate()
+		material = load("res://addons/csg_terrain/csg_terrain_material.tres").duplicate(true)
 	
 	# If there's no mesh, make a new one and also the first curve
 	if not is_instance_valid(mesh):

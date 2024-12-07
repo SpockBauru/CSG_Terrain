@@ -78,7 +78,7 @@ func create_mesh_arrays(divs: int, size: float) -> void:
 
 func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	# Mesh in ArrayMesh format
-	var surface_array = []
+	var surface_array: Array = []
 	surface_array.resize(Mesh.ARRAY_MAX)
 	surface_array[Mesh.ARRAY_TEX_UV] = uvs
 	surface_array[Mesh.ARRAY_TEX_UV2] = uvs
@@ -285,84 +285,107 @@ func update_quad_indices(idx: Vector2i, divs: int) -> void:
 # Making a cube bellow the tarrain
 func close_shape(size: float, divs: int, surface_array: Array):
 	# Add vertices of the bottom quad
-	var vert_list: PackedVector3Array = surface_array[Mesh.ARRAY_VERTEX]
 	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)
 	
-	var vertex: Vector3 = Vector3(0, -size, 0) - center
-	vert_list.append(vertex)
-	vertex = Vector3(0, -size, size) - center
-	vert_list.append(vertex)
-	vertex = Vector3(size, -size, 0 ) - center
-	vert_list.append(vertex)
-	vertex = Vector3(size, -size, size) - center
-	vert_list.append(vertex)
+	var new_vertices:PackedVector3Array  = []
+	new_vertices.resize(4)
+	new_vertices[0] = Vector3(0, -size, 0) - center
+	new_vertices[1] = Vector3(0, -size, size) - center
+	new_vertices[2] = Vector3(size, -size, 0 ) - center
+	new_vertices[3] = Vector3(size, -size, size) - center
 	
-	surface_array[Mesh.ARRAY_VERTEX] = vert_list
+	var vert_list: PackedVector3Array = surface_array[Mesh.ARRAY_VERTEX]
+	vert_list.append_array(new_vertices)
+	#surface_array[Mesh.ARRAY_VERTEX] = vert_list
 	
 	# Add indices of the bottom quad
-	var index = (divs + 1) * (divs + 1)
-	indices.append(index)
-	indices.append(index + 1)
-	indices.append(index + 3)
-	indices.append(index)
-	indices.append(index + 3)
-	indices.append(index + 2)
+	var index: int = (divs + 1) * (divs + 1)
+	var new_indices: PackedInt32Array = []
+	new_indices.resize(18 + divs * 12)
 	
-	# Connect indices from terrain plane with bottom quad
-	for i in range(divs):
-		var left = i
-		indices.append(left)
-		indices.append(left + 1)
-		indices.append(index)
-		
-		var right = i + divs * (divs + 1)
-		indices.append(right + 1)
-		indices.append(right)
-		indices.append(index + 3)
-		
-		var up = divs * i + i
-		indices.append(up + divs + 1)
-		indices.append(up)
-		indices.append(index + 2)
-		
-		var down = divs + (divs + 1) * i
-		indices.append(down)
-		indices.append(down + divs + 1)
-		indices.append(index + 1)
+	new_indices[0]= index
+	new_indices[1] = index + 1
+	new_indices[2] = index + 3
+	new_indices[3] = index
+	new_indices[4] = index + 3
+	new_indices[5] = index + 2
 	
 	# Fill last triangle for each side
 	# Left
-	indices.append(index + 1)
-	indices.append(index)
-	indices.append(divs)
+	new_indices[6] = index + 1
+	new_indices[7] = index
+	new_indices[8] = divs
 	# Right
-	indices.append(index + 2)
-	indices.append(index + 3)
-	indices.append(divs * (divs + 1))
+	new_indices[9] = index + 2
+	new_indices[10] = index + 3
+	new_indices[11] = divs * (divs + 1)
 	# Top
-	indices.append(index)
-	indices.append(index + 2)
-	indices.append(0)
+	new_indices[12] = index
+	new_indices[13] = index + 2
+	new_indices[14] = 0
 	# Down
-	indices.append(index + 3)
-	indices.append(index + 1)
-	indices.append((divs) * (divs + 1) + divs)
+	new_indices[15] = index + 3
+	new_indices[16] = index + 1
+	new_indices[17] = (divs) * (divs + 1) + divs
 	
-	surface_array[Mesh.ARRAY_INDEX] = indices
+	# Connect indices from terrain plane with bottom quad
+	var indices_idx: int = 18
+	for i in range(divs):
+		var left: int = i
+		new_indices[indices_idx] = left
+		indices_idx += 1
+		new_indices[indices_idx] = left + 1
+		indices_idx += 1
+		new_indices[indices_idx] = index
+		indices_idx += 1
+		
+		var right: int = i + divs * (divs + 1)
+		new_indices[indices_idx] = right + 1
+		indices_idx += 1
+		new_indices[indices_idx] = right
+		indices_idx += 1
+		new_indices[indices_idx] = index + 3
+		indices_idx += 1
+		
+		var up: int = divs * i + i
+		new_indices[indices_idx] = up + divs + 1
+		indices_idx += 1
+		new_indices[indices_idx] = up
+		indices_idx += 1
+		new_indices[indices_idx] = index + 2
+		indices_idx += 1
+		
+		var down: int = divs + (divs + 1) * i
+		new_indices[indices_idx] = down
+		indices_idx += 1
+		new_indices[indices_idx] = down + divs + 1
+		indices_idx += 1
+		new_indices[indices_idx] = index + 1
+		indices_idx += 1
+	
+	indices.append_array(new_indices)
+	#surface_array[Mesh.ARRAY_INDEX] = indices
 	
 	# Add uvs
-	uvs.append(Vector2(0,0))
-	uvs.append(Vector2(0,1))
-	uvs.append(Vector2(1,0))
-	uvs.append(Vector2(1,1))
-	surface_array[Mesh.ARRAY_TEX_UV] = uvs
-	surface_array[Mesh.ARRAY_TEX_UV2] = uvs
+	var new_uvs: PackedVector2Array = []
+	new_uvs.resize(4)
+	new_uvs[0] = Vector2(0,0)
+	new_uvs[1] = Vector2(0,1)
+	new_uvs[2] = Vector2(1,0)
+	new_uvs[3] = Vector2(1,1)
+	
+	uvs.append_array(new_uvs)
+	#surface_array[Mesh.ARRAY_TEX_UV] = uvs
+	#surface_array[Mesh.ARRAY_TEX_UV2] = uvs
 	
 	# Add Normals
-	var normals: PackedVector3Array = surface_array[Mesh.ARRAY_NORMAL]
-	normals.append(Vector3.UP)
-	normals.append(Vector3.UP)
-	normals.append(Vector3.UP)
-	normals.append(Vector3.UP)
+	var new_normals: PackedVector3Array = []
+	new_normals.resize(4)
+	new_normals[0] = Vector3.UP
+	new_normals[1] = Vector3.UP
+	new_normals[2] = Vector3.UP
+	new_normals[3] = Vector3.UP
 	
-	surface_array[Mesh.ARRAY_NORMAL] = normals
+	var normals: PackedVector3Array = surface_array[Mesh.ARRAY_NORMAL]
+	normals.append_array(new_normals)
+	#surface_array[Mesh.ARRAY_NORMAL] = normals

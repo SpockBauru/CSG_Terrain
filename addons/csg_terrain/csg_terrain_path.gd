@@ -1,3 +1,4 @@
+@tool
 class_name CSGTerrainPath
 extends Path3D
 
