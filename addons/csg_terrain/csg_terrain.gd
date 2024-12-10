@@ -27,9 +27,9 @@ signal terrain_need_update
 		path_mask_resolution = value
 		_resolution_changed(old_value)
 
-## Create a static MeshInstance3D with optimized material for use in games.[br][br]
+## Create an optimized MeshInstance3D without the bottom cube[br][br]
 ## Good topology is not guaranteed. You may need manually edit in an 3D software.
-@export var create_static_mesh: bool = false
+@export var export_terrain_only: bool = false
 
 # CSGTerrain classes
 var terrain_mesh = CSGTerrainMesh.new()
@@ -79,10 +79,10 @@ func _ready() -> void:
 # Wainting for Godot to implement @export_button. 
 # Implemented on 4.4 dev, waiting for the beta
 func _process(_delta: float) -> void:
-	if create_static_mesh == true:
-		create_static_mesh = false
+	if export_terrain_only == true:
+		export_terrain_only = false
 		var export = CSGTerrainExport.new()
-		export.create_mesh(self)
+		export.create_mesh(self, size)
 
 
 # When a Path3D enters, add the script CSGTerrainPath
