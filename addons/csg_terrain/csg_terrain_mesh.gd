@@ -62,18 +62,15 @@ func create_mesh_arrays(divs: int, size: float) -> void:
 		for z in range(divs):
 			# First triangle vertices
 			indices[index] = z + row
-			index += 1
-			indices[index] = z + next_row + 1
-			index += 1
-			indices[index] = z + row + 1
-			index += 1
+			indices[index + 1] = z + next_row + 1
+			indices[index + 2] = z + row + 1
+			
 			# Second triangle vertices
-			indices[index] = z + row
-			index += 1
-			indices[index] = z + next_row
-			index += 1
-			indices[index] = z + next_row + 1
-			index += 1
+			indices[index + 3] = z + row
+			indices[index + 4] = z + next_row
+			indices[index + 5] = z + next_row + 1
+			
+			index += 6
 
 
 func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
@@ -95,15 +92,12 @@ func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	# Making manually because using surfacetool was 3-5 times slower
 	var normals: PackedVector3Array = []
 	normals.resize((divs + 1) * (divs + 1))
-	var index: int = 0
-	for i in range(indices.size() / 3):
+	
+	for index in range(0, indices.size(), 3):
 		# Vertices of the triangle
 		var a: Vector3 = vert_list[indices[index]]
-		index += 1
-		var b: Vector3 = vert_list[indices[index]]
-		index += 1
-		var c: Vector3 = vert_list[indices[index]]
-		index += 1
+		var b: Vector3 = vert_list[indices[index + 1]]
+		var c: Vector3 = vert_list[indices[index + 2]]
 		
 		# Creating normal from edges
 		var edge1: Vector3 = b - a
@@ -111,9 +105,9 @@ func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 		var normal: Vector3 = edge1.cross(edge2)
 		
 		# Adding normal to each vertex
-		normals[indices[index - 1]] += normal
-		normals[indices[index - 2]] += normal
-		normals[indices[index - 3]] += normal
+		normals[indices[index]] += normal
+		normals[indices[index + 1]] += normal
+		normals[indices[index + 2]] += normal
 	
 	# Normalize and apply
 	for i in range(normals.size()):
@@ -254,31 +248,23 @@ func update_quad_indices(idx: Vector2i, divs: int) -> void:
 	if diagonal_1.y >= diagonal_2.y:
 		# First triangle vertices
 		indices[index] = z + row
-		index += 1
-		indices[index] = z + next_row + 1
-		index += 1
-		indices[index] = z + row + 1
-		index += 1
+		indices[index + 1] = z + next_row + 1
+		indices[index + 2] = z + row + 1
+		
 		# Second triangle vertices
-		indices[index] = z + row
-		index += 1
-		indices[index] = z + next_row
-		index += 1
-		indices[index] = z + next_row + 1
+		indices[index + 3] = z + row
+		indices[index + 4] = z + next_row
+		indices[index + 5] = z + next_row + 1
 	else:
 		# First triangle vertices
 		indices[index] = z + next_row
-		index += 1
-		indices[index] = z + next_row + 1
-		index += 1
-		indices[index] = z + row + 1
-		index += 1
-		## Second triangle vertices
-		indices[index] = z + next_row
-		index += 1
-		indices[index] = z + row + 1
-		index += 1
-		indices[index] = z + row
+		indices[index + 1] = z + next_row + 1
+		indices[index + 2] = z + row + 1
+		
+		# Second triangle vertices
+		indices[index + 3] = z + next_row
+		indices[index + 4] = z + row + 1
+		indices[index + 5] = z + row
 
 
 # CSG meshes must be closed in Godot 4.4 dev6. I'm not a fan of the change...
@@ -319,7 +305,7 @@ func close_shape(size: float, divs: int, surface_array: Array):
 	new_indices[9] = index + 2
 	new_indices[10] = index + 3
 	new_indices[11] = divs * (divs + 1)
-	# Top
+	# Up
 	new_indices[12] = index
 	new_indices[13] = index + 2
 	new_indices[14] = 0
@@ -333,35 +319,25 @@ func close_shape(size: float, divs: int, surface_array: Array):
 	for i in range(divs):
 		var left: int = i
 		new_indices[indices_idx] = left
-		indices_idx += 1
-		new_indices[indices_idx] = left + 1
-		indices_idx += 1
-		new_indices[indices_idx] = index
-		indices_idx += 1
+		new_indices[indices_idx + 1] = left + 1
+		new_indices[indices_idx + 2] = index
 		
 		var right: int = i + divs * (divs + 1)
-		new_indices[indices_idx] = right + 1
-		indices_idx += 1
-		new_indices[indices_idx] = right
-		indices_idx += 1
-		new_indices[indices_idx] = index + 3
-		indices_idx += 1
+		new_indices[indices_idx + 3] = right + 1
+		new_indices[indices_idx + 4] = right
+		new_indices[indices_idx + 5] = index + 3
 		
 		var up: int = divs * i + i
-		new_indices[indices_idx] = up + divs + 1
-		indices_idx += 1
-		new_indices[indices_idx] = up
-		indices_idx += 1
-		new_indices[indices_idx] = index + 2
-		indices_idx += 1
+		new_indices[indices_idx + 6] = up + divs + 1
+		new_indices[indices_idx + 7] = up
+		new_indices[indices_idx + 8] = index + 2
 		
 		var down: int = divs + (divs + 1) * i
-		new_indices[indices_idx] = down
-		indices_idx += 1
-		new_indices[indices_idx] = down + divs + 1
-		indices_idx += 1
-		new_indices[indices_idx] = index + 1
-		indices_idx += 1
+		new_indices[indices_idx + 9] = down
+		new_indices[indices_idx + 10] = down + divs + 1
+		new_indices[indices_idx + 11] = index + 1
+		
+		indices_idx += 12
 	
 	indices.append_array(new_indices)
 	#surface_array[Mesh.ARRAY_INDEX] = indices
