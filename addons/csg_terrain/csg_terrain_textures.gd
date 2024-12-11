@@ -1,7 +1,9 @@
+# Class responsible to make the mask that show the path texture (when they are enabled)
 class_name CSGTerrainTextures
 
 var mask: Image = Image.new()
 
+# Main texture manager. This is what external classes should call.
 func apply_textures(material: Material, path_list: Array[CSGTerrainPath], mask_size: int, size: float) -> void:
 	if path_list.size() <= 0: 
 		return

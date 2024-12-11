@@ -1,4 +1,4 @@
-# Main manager of CSGTerrain
+# Main manager of CSGTerrain. This is what will call the other classes.
 @tool
 @icon("CSGTerrain.svg")
 class_name CSGTerrain

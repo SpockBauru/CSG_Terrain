@@ -30,7 +30,7 @@ sky_material = SubResource("ProceduralSkyMaterial_sg3mp")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_unsmn"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_fhwdq"]
 
 [sub_resource type="Curve3D" id="Curve3D_syd0c"]
 bake_interval = 8.0
@@ -235,7 +235,7 @@ transform = Transform3D(-0.984808, 0.0593911, -0.163176, 0, 0.939693, 0.34202, 0
 
 [node name="CSGTerrain" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
-mesh = SubResource("ArrayMesh_unsmn")
+mesh = SubResource("ArrayMesh_fhwdq")
 script = ExtResource("2_2gsmg")
 
 [node name="RoadPath" type="Path3D" parent="CSGTerrain"]
@@ -258,14 +258,14 @@ script = ExtResource("3_7ygkl")
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 0, -25)
 curve = SubResource("Curve3D_yew1r")
 script = ExtResource("3_7ygkl")
 width = 6
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 13, 11, -25)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 13, 11, -25)
 operation = 2
 radius = 6.0
 height = 70.0
@@ -279,7 +279,7 @@ size = Vector3(12, 71, 7)
 material = SubResource("StandardMaterial3D_ewlwn")
 
 [node name="Tunnel" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 13, 11, -280)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 13, 11, -280)
 use_collision = true
 radius = 6.0
 height = 70.0

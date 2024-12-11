@@ -1,5 +1,6 @@
-# Still in development. Does not work properly :'(
+# Class Responsible to export an optimized MeshInstance3D into the scene.
 class_name CSGTerrainExport
+
 
 func create_mesh(csg_mesh: CSGMesh3D, size: float) -> void:
 	# Creating a meshArray

@@ -1,4 +1,4 @@
-# Class responsible to deal with the mesh itself.
+# Class responsible to deal with the mesh itself. This is what make paths bend the terrain.
 class_name CSGTerrainMesh
 
 # Vertex grid in [x][z] plane
@@ -8,7 +8,7 @@ var uvs: PackedVector2Array = []
 var indices: PackedInt32Array = []
 
 
-# Main update manager
+# Main mesh manager. This is what external classes should call.
 func update_mesh(mesh: ArrayMesh, path_list: Array[CSGTerrainPath], divs: int, size: float) -> void:
 	# Recrieate all mesh arrays. seems expensive but is the last of our problems.
 	create_mesh_arrays(divs, size)

@@ -1,3 +1,5 @@
+# Class responsible for holding the information for the path's mesh and texture.
+# Each path will have this attached.
 @tool
 class_name CSGTerrainPath
 extends Path3D
@@ -16,6 +18,7 @@ extends Path3D
 		smoothness = value
 		curve_changed.emit()
 
+## Paint a path bellow the curve
 @export var path_texture: bool = false:
 	set(value):
 		path_texture = value

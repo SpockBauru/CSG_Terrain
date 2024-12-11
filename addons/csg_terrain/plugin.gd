@@ -1,3 +1,5 @@
+# This is how you make plugins, take a look at
+# https://docs.godotengine.org/en/stable/tutorials/plugins/editor/making_plugins.html
 @tool
 extends EditorPlugin
 
