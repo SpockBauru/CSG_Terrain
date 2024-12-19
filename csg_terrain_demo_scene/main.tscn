@@ -1,7 +1,7 @@
 [gd_scene load_steps=40 format=3 uid="uid://ccwse00sf1jqo"]
 
-[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain.gd" id="2_2gsmg"]
-[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain_path.gd" id="3_7ygkl"]
+[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain.gd" id="1_s7ily"]
+[ext_resource type="Script" path="res://addons/csg_terrain/csg_terrain_path.gd" id="2_27p1k"]
 
 [sub_resource type="Gradient" id="Gradient_mh5g4"]
 offsets = PackedFloat32Array(0.209459, 1)
@@ -30,7 +30,7 @@ sky_material = SubResource("ProceduralSkyMaterial_sg3mp")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_fhwdq"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_wyhcb"]
 
 [sub_resource type="Curve3D" id="Curve3D_syd0c"]
 bake_interval = 8.0
@@ -235,32 +235,32 @@ transform = Transform3D(-0.984808, 0.0593911, -0.163176, 0, 0.939693, 0.34202, 0
 
 [node name="CSGTerrain" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
-mesh = SubResource("ArrayMesh_fhwdq")
-script = ExtResource("2_2gsmg")
+mesh = SubResource("ArrayMesh_wyhcb")
+script = ExtResource("1_s7ily")
 
 [node name="RoadPath" type="Path3D" parent="CSGTerrain"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, 0, 256)
 curve = SubResource("Curve3D_syd0c")
-script = ExtResource("3_7ygkl")
+script = ExtResource("2_27p1k")
 width = 2
 
 [node name="Hill1" type="Path3D" parent="CSGTerrain"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230, 0, -25)
 curve = SubResource("Curve3D_uf332")
-script = ExtResource("3_7ygkl")
+script = ExtResource("2_27p1k")
 width = 8
 path_texture = true
 
 [node name="Hill2" type="Path3D" parent="CSGTerrain"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0, -25)
 curve = SubResource("Curve3D_s13e4")
-script = ExtResource("3_7ygkl")
+script = ExtResource("2_27p1k")
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 0, -25)
 curve = SubResource("Curve3D_yew1r")
-script = ExtResource("3_7ygkl")
+script = ExtResource("2_27p1k")
 width = 6
 path_texture = true
 

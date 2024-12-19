@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfc0mahjkj0fa"
-path="res://.godot/imported/CSGTerrain.svg-05b26eabd14bb4eb17e84d5808ab3eb8.ctex"
+path="res://.godot/imported/csg_terrain.svg-e92095bf0fbe502ca870f213bf40e1e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/csg_terrain/CSGTerrain.svg"
-dest_files=["res://.godot/imported/CSGTerrain.svg-05b26eabd14bb4eb17e84d5808ab3eb8.ctex"]
+source_file="res://addons/csg_terrain/csg_terrain.svg"
+dest_files=["res://.godot/imported/csg_terrain.svg-e92095bf0fbe502ca870f213bf40e1e6.ctex"]
 
 [params]
 

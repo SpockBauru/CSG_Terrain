@@ -1,6 +1,6 @@
 # Main manager of CSGTerrain. This is what will call the other classes.
 @tool
-@icon("CSGTerrain.svg")
+@icon("csg_terrain.svg")
 class_name CSGTerrain
 extends CSGMesh3D
 
