@@ -3,7 +3,7 @@
 @tool
 extends EditorPlugin
 
-var icon: Texture2D = preload("CSGTerrain.svg")
+var icon: Texture2D = preload("csg_terrain.svg")
 
 
 func _enter_tree() -> void:
