@@ -2,7 +2,7 @@
 class_name CSGTerrainExport
 
 
-func create_mesh(csg_mesh: CSGMesh3D, size: float) -> void:
+func create_mesh(csg_mesh: CSGMesh3D, size: float, path_mask_resolution) -> void:
 	# Creating a meshArray
 	var array_mesh: ArrayMesh = csg_mesh.get_meshes()[1].duplicate()
 	var surface: Array = array_mesh.surface_get_arrays(0)
@@ -46,6 +46,7 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float) -> void:
 	var terrain_mesh: MeshInstance3D = MeshInstance3D.new()
 	terrain_mesh.name = csg_mesh.name + "-Mesh"
 	terrain_mesh.mesh = array_mesh
+	terrain_mesh.mesh.lightmap_size_hint = Vector2i(path_mask_resolution, path_mask_resolution)
 	
 	# Copy Mesh parameters
 	terrain_mesh.transform = csg_mesh.transform
