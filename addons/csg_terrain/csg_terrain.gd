@@ -83,6 +83,7 @@ func _process(_delta: float) -> void:
 		export_terrain_only = false
 		var export = CSGTerrainExport.new()
 		export.create_mesh(self, size, path_mask_resolution)
+		visible = false
 
 
 # When a Path3D enters, add the script CSGTerrainPath
