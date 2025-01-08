@@ -18,7 +18,7 @@ extends Path3D
 		smoothness = value
 		curve_changed.emit()
 
-## Paint a path bellow the curve
+## Paint a path bellow the curve.
 @export var path_texture: bool = false:
 	set(value):
 		path_texture = value

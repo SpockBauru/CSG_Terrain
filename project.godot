@@ -12,8 +12,8 @@ config_version=5
 
 config/name="CSG Terrain"
 run/main_scene="res://csg_terrain_demo_scene/main.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/features=PackedStringArray("4.4", "Forward Plus")
+config/icon="res://addons/csg_terrain/csg_terrain.svg"
 
 [editor_plugins]
 

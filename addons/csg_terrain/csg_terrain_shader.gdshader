@@ -1,5 +1,4 @@
 shader_type spatial;
-//render_mode cull_disabled;
 
 uniform float wall_underlay = 2.0;
 
@@ -49,15 +48,15 @@ void vertex() {
 }
 
 void fragment() {
-	// Blend values between textures
+	// Blend values between textures.
 	float path_blend = texture(path_mask, UV).r;
 	float ground_blend = 1.0 - wall_blend;
 	
-	// Triplanar position
+	// Triplanar position.
 	vec2 uv = mix(pos_vertex.xy, pos_vertex.zy, round(pos_normal.x));
 	uv = mix(uv, pos_vertex.xz, round(pos_normal.y));
 	
-	// Albedo color
+	// Albedo color.
 	vec3 ground_albedo_color = ground_color.rgb * texture(ground_albedo, uv * ground_scale).rgb;
 	vec3 wall_albedo_color = wall_color.rgb * texture(wall_albedo, uv * wall_scale).rgb;
 	vec3 albedo = ground_albedo_color * ground_blend + wall_albedo_color * wall_blend;
@@ -66,7 +65,7 @@ void fragment() {
 	
 	ALBEDO = mix(albedo, path_albedo_color, path_blend);
 	
-	// Normal Map
+	// Normal Map.
 	vec3 ground_normal = ground_normal_strenght * texture(ground_normal_map, uv * ground_scale).rgb;
 	vec3 wall_normal = wall_normal_strenght * texture(wall_normal_map, uv * wall_scale).rgb;
 	vec3 normal_map = ground_normal * ground_blend + wall_normal * wall_blend;
@@ -75,7 +74,7 @@ void fragment() {
 	
 	NORMAL_MAP = mix(normal_map, path_normal, path_blend);
 	
-	// Roughness
+	// Roughness.
 	float ground_rough = ground_roughness * texture(ground_rough_map, uv * ground_scale).r;
 	float wall_rough = wall_roughness * texture(wall_rough_map, uv * wall_scale).r;
 	float roughness = ground_rough * ground_blend + wall_rough * wall_blend;

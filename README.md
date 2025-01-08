@@ -27,7 +27,7 @@ When creating a new Path3D as child of the CSG Terrain node, the path node will 
 
 **Smoothness:** Amount of curvature around the path. Value 1 will smoothly lower the curve. Zero will create a flat slope with the height of the curve.
 
-**Path Texture:** Enabling this option a texture will be drown on the terrain right bellow the curve. You can choose the texture in the [Terrain Material](#terrain-material)
+**Path Texture:** Enabling this option a texture will be drown on the terrain right below the curve. You can choose the texture in the [Terrain Material](#terrain-material)
 
 **Texture Width:** How many pixels around the path that will be painted.
 
@@ -50,6 +50,10 @@ The CSGTerrain node comes with several parameters:
 **Divs:** The number of faces on each side of the terrain. Higher values will cause slowdown and are not recommended. Place several smaller terrains instead.
 
 **Path Mask Resolution:** The resolution of the mask applied to the path texture. Only change if the path texture is not merging accordingly.
+
+**Bake Terrain Top:** Create a MeshInstance3D without the bottom cube. It will be placed below the CSG Terrain node.
+
+**Export Terrain Top:** Save the mesh to a glTF file so it can be edited in 3D software.
 
 
 ## The Terrain material

@@ -20,18 +20,24 @@ signal terrain_need_update
 		divs = value
 		_divs_changed(old_value)
 
-## Resolution of the mask applied to paths. Change if the path texture doesn't merge accordingly
+## Resolution of the mask applied to paths. Change if the path texture doesn't merge accordingly.
 @export var path_mask_resolution: int = 512:
 	set(value):
 		var old_value = path_mask_resolution
 		path_mask_resolution = value
 		_resolution_changed(old_value)
 
-## Create an optimized MeshInstance3D without the bottom cube[br][br]
-## Good topology is not guaranteed. You may need manually edit in an 3D software.
-@export var export_terrain_only: bool = false
+## Create an optimized MeshInstance3D without the bottom cube.[br][br]
+## Good topology is not guaranteed. You may need to edit it manually in 3D software.
+@export_tool_button("Bake Terrain Top", "MeshInstance3D") var nake_button = _bake_terrain
 
-# CSGTerrain classes
+## Create an GLTF file without the bottom cube.
+@export_tool_button("Export Terrain Top", "MeshInstance3D") var export_button = _export_terrain
+
+# Dialog box for Save GLTF file
+var fileDialog: EditorFileDialog = null
+
+# CSGTerrain classes.
 var terrain_mesh = CSGTerrainMesh.new()
 var textures = CSGTerrainTextures.new()
 var path_list: Array[CSGTerrainPath] = []
@@ -40,15 +46,15 @@ var is_updating: bool = false
 
 
 func _ready() -> void:
-	# Skip if is not in editor
+	# Skip if is not in editor.
 	if not Engine.is_editor_hint():
 		return
 	
-	# Instantiate material if it's empty
+	# Instantiate material if it's empty.
 	if not is_instance_valid(material):
 		material = load("res://addons/csg_terrain/csg_terrain_material.tres").duplicate(true)
 	
-	# If there's no mesh, make a new one and also the first curve
+	# If there's no mesh, make a new one and also the first curve.
 	if not is_instance_valid(mesh):
 		mesh = ArrayMesh.new()
 		var path: Path3D = Path3D.new()
@@ -62,12 +68,12 @@ func _ready() -> void:
 		add_child(path, true)
 		path.set_owner(get_tree().edited_scene_root)
 	
-	# Populate path list
+	# Populate path list.
 	path_list.clear()
 	for child in get_children():
 		_child_entered(child)
 	
-	# Signals
+	# Signals.
 	child_entered_tree.connect(_child_entered)
 	child_exiting_tree.connect(_child_exit)
 	child_order_changed.connect(_child_order_changed)
@@ -76,17 +82,7 @@ func _ready() -> void:
 	terrain_need_update.emit()
 
 
-# Wainting for Godot to implement @export_button. 
-# Implemented on 4.4 dev, waiting for the beta
-func _process(_delta: float) -> void:
-	if export_terrain_only == true:
-		export_terrain_only = false
-		var export = CSGTerrainExport.new()
-		export.create_mesh(self, size, path_mask_resolution)
-		visible = false
-
-
-# When a Path3D enters, add the script CSGTerrainPath
+# When a Path3D enters, add the script CSGTerrainPath.
 func _child_entered(child) -> void:
 	if child is Path3D:
 		child = child as Path3D
@@ -146,17 +142,49 @@ func _resolution_changed(old_resolution) -> void:
 	terrain_need_update.emit()
 
 
-# Never call _update_terrain directly. Emit the signal terrain_need_update instead
+# Never call _update_terrain directly. Emit the signal terrain_need_update instead.
 func _update_terrain():
-	# Block if alredy received an update request on the current frame
+	# Block if alredy received an update request on the current frame.
 	if is_updating == true:
 		return
 	is_updating = true
 	
-	# CSGTerrain update methods
+	# CSGTerrain update methods.
 	terrain_mesh.update_mesh(mesh, path_list, divs, size)
 	textures.apply_textures(material, path_list, path_mask_resolution, size)
 	
-	# Wait until next frame to recieve more update requests
+	# Wait until next frame to recieve more update requests.
 	await get_tree().process_frame
 	is_updating = false
+
+
+## Create an optimized MeshInstance3D without the bottom cube[br][br].
+## Good topology is not guaranteed. You may need to edit it manually in 3D software.
+func _bake_terrain() -> void:
+	var bake = CSGTerrainBake.new()
+	var new_mesh: MeshInstance3D = bake.create_mesh(self, size, path_mask_resolution)
+	add_sibling(new_mesh, true)
+	new_mesh.owner = owner
+	visible = false
+
+
+# Create a file dialog, then call _export_gltf when the file path is chosen.
+func _export_terrain() -> void:
+	var path = "res://" + name + ".glb"
+	var editorViewport = EditorInterface.get_editor_viewport_3d()
+	fileDialog = EditorFileDialog.new()
+	editorViewport.add_child(fileDialog, true)
+	
+	fileDialog.file_selected.connect(_export_gltf)
+	fileDialog.current_path = path
+	fileDialog.access = EditorFileDialog.ACCESS_FILESYSTEM
+	fileDialog.set_meta("_created_by", self)
+	fileDialog.popup_file_dialog()
+
+
+# Export the mesh to GLTF file.
+func _export_gltf(path: String):
+	var export = CSGTerrainBake.new()
+	export.export_gltf(path, self, size, path_mask_resolution)
+	fileDialog.queue_free()
+	EditorInterface.get_resource_filesystem().scan_sources()
