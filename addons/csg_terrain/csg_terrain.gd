@@ -29,10 +29,10 @@ signal terrain_need_update
 
 ## Create an optimized MeshInstance3D without the bottom cube.[br][br]
 ## Good topology is not guaranteed. You may need to edit it manually in 3D software.
-@export_tool_button("Bake Terrain Top", "MeshInstance3D") var nake_button = _bake_terrain
+@export_tool_button("Bake Terrain Top Mesh", "MeshInstance3D") var nake_button = _bake_terrain
 
 ## Create an GLTF file without the bottom cube.
-@export_tool_button("Export Terrain Top", "MeshInstance3D") var export_button = _export_terrain
+@export_tool_button("Export Terrain Top File", "MeshInstance3D") var export_button = _export_terrain
 
 # Dialog box for Save GLTF file
 var fileDialog: EditorFileDialog = null
@@ -148,13 +148,13 @@ func _update_terrain():
 	if is_updating == true:
 		return
 	is_updating = true
+	# Wait until next frame to recieve more update requests.
+	await get_tree().process_frame
 	
 	# CSGTerrain update methods.
 	terrain_mesh.update_mesh(mesh, path_list, divs, size)
 	textures.apply_textures(material, path_list, path_mask_resolution, size)
 	
-	# Wait until next frame to recieve more update requests.
-	await get_tree().process_frame
 	is_updating = false
 
 

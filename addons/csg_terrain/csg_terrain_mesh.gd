@@ -360,4 +360,3 @@ func close_shape(size: float, divs: int, surface_array: Array):
 	
 	var normals: PackedVector3Array = surface_array[Mesh.ARRAY_NORMAL]
 	normals.append_array(new_normals)
-	surface_array[Mesh.ARRAY_NORMAL] = normals
