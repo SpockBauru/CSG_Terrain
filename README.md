@@ -3,7 +3,7 @@
 # CSG Terrain
 
 <p align="center" width="100%">
-  <img width="500px" src="https://github.com/user-attachments/assets/dca0127c-8349-41f5-9dcc-a66836708446"
+  <img width="501px" src="https://github.com/user-attachments/assets/dca0127c-8349-41f5-9dcc-a66836708446"
 </p>
 
 > ### Prototype your terrain faster with the power of curves and [CSG nodes](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
@@ -70,7 +70,7 @@ The CSGTerrain node comes with several parameters:
 **Export Terrain Top:** Save the mesh to a glTF file so it can be edited in 3D software.
 
 <p align="center" width="100%">
-  <img width="500px" src="https://github.com/user-attachments/assets/fc38dab7-fb13-4c33-9464-a076931a2fdb"
+  <img width="620px" src="https://github.com/user-attachments/assets/fc38dab7-fb13-4c33-9464-a076931a2fdb"
 </p>
 
 
@@ -86,7 +86,7 @@ The Shader Parameter **Wall Underlay** set how the wall will be merged with the 
 The terrain material aims to be simple and serves as base for users make their own terrain material. In the final product it's recommended to polish this shader and make optimizations such as [channel packing](http://wiki.polycount.com/wiki/ChannelPacking).
 
 <p align="center" width="100%">
-  <img height="500px" src="https://github.com/user-attachments/assets/b17a4cc5-c43e-4479-993f-4f32bda7d232"
+  <img width="456px" src="https://github.com/user-attachments/assets/b17a4cc5-c43e-4479-993f-4f32bda7d232"
 </p>
 
 
