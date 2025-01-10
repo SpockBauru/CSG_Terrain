@@ -1,6 +1,11 @@
-# WARNING: Code in beta stage. Only works with Godot 4.4 dev6 or later.
+## WARNING: This plugin is in beta phase. Only works with Godot 4.4 dev6 or later.
 
 # CSG Terrain
+
+<p align="center" width="100%">
+  <img width="500px" src="https://github.com/user-attachments/assets/dca0127c-8349-41f5-9dcc-a66836708446"
+</p>
+
 > ### Prototype your terrain faster with the power of curves and [CSG nodes](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
 
 
@@ -9,7 +14,7 @@ This is a plugin for [Godot Engine](https://godotengine.org/) to prototype terra
 
 Unlike other systems **the terrain is molded purely with paths, not brushes or other 3D tools**. This forced simplicity allows to focus on what is important before finalizing in 3D software.
 
-CSGTerrain is based on 3D meshes, so it's compatible with [Godot's Baked Global Illumination](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html) and can be exported to 3D softwares such as [Blender](https://www.blender.org/).
+CSGTerrain is based on 3D meshes, so it's compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html) and can be exported to 3D softwares such as [Blender](https://www.blender.org/).
 
 
 ## How does it work?
@@ -35,6 +40,9 @@ When creating a new Path3D as child of the CSG Terrain node, the path node will 
 
 **Texture Smoothness:** How much the path texture will blend with the terrain. Zero will cause blockness and high values will make the texture thinner.
 
+<p align="center" width="100%">
+  <img width="500px" src="https://github.com/user-attachments/assets/d9aa2e37-deb5-41fb-bfdc-d8e0ef34e828"
+</p>
 
 ### Order matters
 Similar to canvas items, paths that are childs of the CSG Terrain node will be applied one on top of each other following the order in the scene tree.
@@ -42,6 +50,10 @@ Similar to canvas items, paths that are childs of the CSG Terrain node will be a
 The first child will be drown on bottom and the last will be drown on top.
 
 You can change the order at will.
+
+<p align="center" width="100%">
+  <img width="500px" src="https://github.com/user-attachments/assets/c0f5d464-d8d3-495f-9a9c-fa88b59ecf83"
+</p>
 
 
 ## The CSGTerrain node
@@ -53,9 +65,13 @@ The CSGTerrain node comes with several parameters:
 
 **Path Mask Resolution:** The resolution of the mask applied to the path texture. Only change if the path texture is not merging accordingly.
 
-**Bake Terrain Top:** Create a MeshInstance3D without the bottom cube. It will be placed below the CSG Terrain node. This step is necessary in order to be compatible with [Godot's Baked Global Illumination](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html).
+**Bake Terrain Top:** Create a MeshInstance3D without the bottom cube. It will be placed below the CSG Terrain node. This step is necessary in order to be compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html).
 
 **Export Terrain Top:** Save the mesh to a glTF file so it can be edited in 3D software.
+
+<p align="center" width="100%">
+  <img width="500px" src="https://github.com/user-attachments/assets/fc38dab7-fb13-4c33-9464-a076931a2fdb"
+</p>
 
 
 ## The Terrain material
@@ -68,6 +84,10 @@ For each one you can change the material properties and the textures for Albedo,
 The Shader Parameter **Wall Underlay** set how the wall will be merged with the ground. Zero means no wall will be applied. High values will make the transition sharper.
 
 The terrain material aims to be simple and serves as base for users make their own terrain material. In the final product it's recommended to polish this shader and make optimizations such as [channel packing](http://wiki.polycount.com/wiki/ChannelPacking).
+
+<p align="center" width="100%">
+  <img height="500px" src="https://github.com/user-attachments/assets/b17a4cc5-c43e-4479-993f-4f32bda7d232"
+</p>
 
 
 ## Future features and how to contribute
