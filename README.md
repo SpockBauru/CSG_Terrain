@@ -65,6 +65,7 @@ If you duplicate an Path3D with Control+D and move to a new CSG Terrain node, bo
 
 **Note:** To avoid conflics, make sure that both terrains have the same Size and Divs, which are explained on the next section.
 
+
 ## The CSG Terrain node
 The CSG Terrain node comes with several parameters:
 
@@ -98,6 +99,7 @@ The terrain material aims to be simple and serves as base for users make their o
   <img width="456px" src="https://github.com/user-attachments/assets/b17a4cc5-c43e-4479-993f-4f32bda7d232"
 </p>
 
+
 ## Limitations
 CSG Terrain is not designed to work with a high number of divs. Instead, consider placing several several smaller terrains.
 
@@ -109,4 +111,4 @@ CSG Terrain is designed to be as simple as possible. Because of that **no new fe
 
 The code aims to be readable and beginner friendly. Users are encoraged to change and expand the code in their end, but this repository must be kept neat and tidy.
 
-Contributions to make the code simpler, more readable and bugfixes are welcomed. Optimizations must be easy to understand even for beginner users, example: Advanced features like compute shaders would greatly benefits the plugin speed, but was kept out of the code in order to keep it accessible for beginners.
+Contributions to make the code simpler, more readable and bugfixes are welcomed. Optimizations must be easy to understand even for beginner/intermediate users, example: Advanced features like compute shaders would greatly benefits the plugin speed, but will be kept out of the code in order to keep it accessible.
