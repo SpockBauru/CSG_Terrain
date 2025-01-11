@@ -59,9 +59,11 @@ You can change the order at will.
 
 If you duplicate an Path3D with Control+D and move to a new CSG Terrain node, both curves will be synchronized.
 
+<p align="center" width="100%">
+  <img width="500px" src="https://github.com/user-attachments/assets/e9744d68-bfa2-496f-a974-e26cb28bbad0"
+</p>
+
 **Note:** To avoid conflics, make sure that both terrains have the same Size and Divs, which are explained on the next section.
-
-
 
 ## The CSG Terrain node
 The CSG Terrain node comes with several parameters:
@@ -97,7 +99,7 @@ The terrain material aims to be simple and serves as base for users make their o
 </p>
 
 ## Limitations
-CSG Terrain is not designed to work with a high number of divs. Instead, consider placing several several smaller terrains with a lower amount of divs.
+CSG Terrain is not designed to work with a high number of divs. Instead, consider placing several several smaller terrains.
 
 Too many or too large paths can decrease performance in the editor. Simple optimization ideas are welcomed as explained on the next section.
 
