@@ -14,15 +14,15 @@ This is a plugin for [Godot Engine](https://godotengine.org/) to prototype terra
 
 Unlike other systems **the terrain is molded purely with paths, not brushes or other 3D tools**. This forced simplicity allows to focus on what is important before finalizing in 3D software.
 
-CSGTerrain is based on 3D meshes, so it's compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html) and can be exported to 3D softwares such as [Blender](https://www.blender.org/).
+CSG Terrain is based on 3D meshes that can be baked to make compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html) and can be exported to 3D softwares such as [Blender](https://www.blender.org/).
 
 
 ## How does it work?
-When placing a CSGTerrain node, it will also place a Path3D in the middle and the terrain will follow it.
+When placing a CSG Terrain node, it will also place a Path3D in the middle and the terrain will follow it.
 
 This is the basic idea: You place paths, and the terrain follows.
 
-You can place as many Path3D nodes as needed.
+You can place several Path3D nodes as needed.
 
 
 ## The Path workflow
@@ -55,9 +55,16 @@ You can change the order at will.
   <img width="500px" src="https://github.com/user-attachments/assets/c0f5d464-d8d3-495f-9a9c-fa88b59ecf83"
 </p>
 
+### Synchronizing neighboring terrains
 
-## The CSGTerrain node
-The CSGTerrain node comes with several parameters:
+If you duplicate an Path3D with Control+D and move to a new CSG Terrain node, both curves will be synchronized.
+
+**Note:** To avoid conflics, make sure that both terrains have the same Size and Divs, which are explained on the next section.
+
+
+
+## The CSG Terrain node
+The CSG Terrain node comes with several parameters:
 
 **Size:** The size of each side of the terrain. Terrains will always be squared. Smaller terrains will have higher vertex density and vice versa.
 
@@ -65,9 +72,9 @@ The CSGTerrain node comes with several parameters:
 
 **Path Mask Resolution:** The resolution of the mask applied to the path texture. Only change if the path texture is not merging accordingly.
 
-**Bake Terrain Top:** Create a MeshInstance3D without the bottom cube. It will be placed below the CSG Terrain node. This step is necessary in order to be compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html).
+**Bake Terrain Mesh:** Create a MeshInstance3D without the bottom cube. It will be placed below the CSG Terrain node. This step is necessary in order to be compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html).
 
-**Export Terrain Top:** Save the mesh to a glTF file so it can be edited in 3D software.
+**Export Terrain File:** Save the mesh without the bottom cube to a glTF file so it can be edited in 3D software.
 
 <p align="center" width="100%">
   <img width="620px" src="https://github.com/user-attachments/assets/fc38dab7-fb13-4c33-9464-a076931a2fdb"
@@ -89,9 +96,14 @@ The terrain material aims to be simple and serves as base for users make their o
   <img width="456px" src="https://github.com/user-attachments/assets/b17a4cc5-c43e-4479-993f-4f32bda7d232"
 </p>
 
+## Limitations
+CSG Terrain is not designed to work with a high number of divs. Instead, consider placing several several smaller terrains with a lower amount of divs.
+
+Too many or too large paths can decrease performance in the editor. Simple optimization ideas are welcomed as explained on the next section.
+
 
 ## Future features and how to contribute
-CSGTerrain is designed to be as simple as possible. Because of that **no new features are planned** in order to avoid [feature creep](https://en.wikipedia.org/wiki/Feature_creep).
+CSG Terrain is designed to be as simple as possible. Because of that **no new features are planned** in order to avoid [feature creep](https://en.wikipedia.org/wiki/Feature_creep).
 
 The code aims to be readable and beginner friendly. Users are encoraged to change and expand the code in their end, but this repository must be kept neat and tidy.
 

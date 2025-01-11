@@ -1,4 +1,4 @@
-# Main manager of CSGTerrain. This is what will call the other classes.
+# Main manager of CSG Terrain. This is what will call the other classes.
 @tool
 @icon("csg_terrain.svg")
 class_name CSGTerrain
@@ -7,14 +7,14 @@ extends CSGMesh3D
 signal terrain_need_update
 
 ## Size of each side of the square.
-@export var size: float = 512:
+@export var size: float = 500:
 	set(value):
 		var old_value = size
 		size = value
 		_size_changed(old_value)
 
 ## Number of subdivisions.
-@export_range(1, 128) var divs: int = 64:
+@export_range(1, 128) var divs: int = 50:
 	set(value):
 		var old_value = divs
 		divs = value
@@ -29,15 +29,15 @@ signal terrain_need_update
 
 ## Create an optimized MeshInstance3D without the bottom cube.[br][br]
 ## Good topology is not guaranteed. You may need to edit it manually in 3D software.
-@export_tool_button("Bake Terrain Top Mesh", "MeshInstance3D") var nake_button = _bake_terrain
+@export_tool_button("Bake Terrain Mesh", "MeshInstance3D") var nake_button = _bake_terrain
 
 ## Create an GLTF file without the bottom cube.
-@export_tool_button("Export Terrain Top File", "MeshInstance3D") var export_button = _export_terrain
+@export_tool_button("Export Terrain File", "File") var export_button = _export_terrain
 
 # Dialog box for Save GLTF file
 var fileDialog: EditorFileDialog = null
 
-# CSGTerrain classes.
+# CSG Terrain classes.
 var terrain_mesh = CSGTerrainMesh.new()
 var textures = CSGTerrainTextures.new()
 var path_list: Array[CSGTerrainPath] = []
@@ -151,7 +151,7 @@ func _update_terrain():
 	# Wait until next frame to recieve more update requests.
 	await get_tree().process_frame
 	
-	# CSGTerrain update methods.
+	# CSG Terrain update methods.
 	terrain_mesh.update_mesh(mesh, path_list, divs, size)
 	textures.apply_textures(material, path_list, path_mask_resolution, size)
 	

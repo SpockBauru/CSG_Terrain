@@ -248,20 +248,21 @@ width = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230, 0, -25)
 curve = SubResource("Curve3D_uf332")
 script = ExtResource("2_27p1k")
-width = 8
+width = 7
 path_texture = true
 
 [node name="Hill2" type="Path3D" parent="CSGTerrain"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0, -25)
 curve = SubResource("Curve3D_s13e4")
 script = ExtResource("2_27p1k")
+width = 3
 path_texture = true
 
 [node name="Hill3" type="Path3D" parent="CSGTerrain"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 0, -25)
 curve = SubResource("Curve3D_yew1r")
 script = ExtResource("2_27p1k")
-width = 6
+width = 5
 path_texture = true
 
 [node name="TunnelHole" type="CSGCylinder3D" parent="CSGTerrain"]
@@ -275,7 +276,7 @@ material = SubResource("StandardMaterial3D_ewlwn")
 [node name="BottomCut" type="CSGBox3D" parent="CSGTerrain/TunnelHole"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 5)
 operation = 2
-size = Vector3(12, 71, 7)
+size = Vector3(12, 75, 7)
 material = SubResource("StandardMaterial3D_ewlwn")
 
 [node name="Tunnel" type="CSGCylinder3D" parent="."]
