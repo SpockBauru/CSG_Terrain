@@ -1,4 +1,4 @@
-# Class Responsible to create an optimized MeshInstance3D into the scene.
+## Class Responsible to create a MeshInstance3D in the scene.
 class_name CSGTerrainBake
 
 
@@ -44,7 +44,12 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, path_mask_resolution) -> Mesh
 		st.generate_normals()
 		st.generate_tangents()
 		st.commit(new_array_mesh)
-		new_array_mesh.surface_set_material(count, old_array_mesh.surface_get_material(count))
+		
+		# Set material.
+		var old_material: Material = old_array_mesh.surface_get_material(count)
+		if is_instance_valid(old_material):
+			var new_material = old_material.duplicate(true)
+			new_array_mesh.surface_set_material(count, new_material)
 	
 	# Creating the new MeshInstance3D.
 	var terrain_mesh: MeshInstance3D = MeshInstance3D.new()
@@ -65,7 +70,7 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, path_mask_resolution) -> Mesh
 	return terrain_mesh
 
 
-# Save mesh to the desired path.
+## Save the terrain mesh to the desired path.
 func export_gltf(path: String, csg_mesh: CSGMesh3D, size: float, path_mask_resolution):
 	var mesh = create_mesh(csg_mesh, size, path_mask_resolution)
 	csg_mesh.get_parent().add_child(mesh, true)

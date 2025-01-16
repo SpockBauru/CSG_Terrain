@@ -1,4 +1,4 @@
-## WARNING: This plugin is in beta phase. Only works with Godot 4.4 dev6 or later.
+## WARNING: This plugin is in beta phase. Only works with Godot 4.4 beta or later.
 
 # CSG Terrain
 
@@ -30,15 +30,13 @@ The terrain follows the line between the points of the path. Because of that eac
 
 When creating a new Path3D as child of the CSG Terrain node, the path node will contain various extra parameters:
 
-**Width:** The number of terrain vertices affected on each side of the curve. The value 2 will affect 2 vertices on each side, the number 0 will only affect the closest vertex.
+**Width:** The number of terrain vertices affected on each side of the curve. The value 2 will affect 2 vertices on each side, the number 0 will not affect the terrain.
 
 **Smoothness:** Amount of curvature around the path. Value 1 will smoothly lower the curve. Zero will create a flat slope with the height of the curve.
 
-**Path Texture:** Enabling this option a texture will be drown on the terrain right below the curve. You can choose the texture in the [Terrain Material](#terrain-material).
+**Paint Width:** How many pixels around the path that will be painted bellow the curve. You can choose the texture in the [Terrain Material](#terrain-material).
 
-**Texture Width:** How many pixels around the path that will be painted.
-
-**Texture Smoothness:** How much the path texture will blend with the terrain. Zero will cause blockness and high values will make the texture thinner.
+**Paint Smoothness:** How much the path texture will blend with the terrain. Zero will cause blockness and high values will make the texture thinner.
 
 <p align="center" width="100%">
   <img width="500px" src="https://github.com/user-attachments/assets/d9aa2e37-deb5-41fb-bfdc-d8e0ef34e828"

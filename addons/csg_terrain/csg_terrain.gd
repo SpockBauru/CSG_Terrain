@@ -9,6 +9,11 @@ signal terrain_need_update
 ## Size of each side of the square.
 @export var size: float = 500:
 	set(value):
+		if value < 0.001:
+			value = 0.001
+		if value > 1024:
+			value = 1024
+		
 		var old_value = size
 		size = value
 		_size_changed(old_value)
@@ -21,7 +26,7 @@ signal terrain_need_update
 		_divs_changed(old_value)
 
 ## Resolution of the mask applied to paths. Change if the path texture doesn't merge accordingly.
-@export var path_mask_resolution: int = 512:
+@export_range(8, 1024) var path_mask_resolution: int = 512:
 	set(value):
 		var old_value = path_mask_resolution
 		path_mask_resolution = value
@@ -82,7 +87,7 @@ func _ready() -> void:
 	terrain_need_update.emit()
 
 
-# When a Path3D enters, add the script CSGTerrainPath.
+## When a Path3D enters, add the script CSGTerrainPath.
 func _child_entered(child) -> void:
 	if child is Path3D:
 		child = child as Path3D
@@ -120,8 +125,8 @@ func _size_changed(old_size: float) -> void:
 		var new_width = path.width * old_size / size
 		path.width = int(new_width)
 		
-		var new_texture_width = path.texture_width * old_size / size
-		path.texture_width = int(new_texture_width)
+		var new_texture_width = path.paint_width * old_size / size
+		path.paint_width = int(new_texture_width)
 	
 	terrain_need_update.emit()
 
@@ -136,13 +141,13 @@ func _divs_changed(old_divs: int) -> void:
 
 func _resolution_changed(old_resolution) -> void:
 	for path in path_list:
-		var new_texture_width = path.texture_width * path_mask_resolution / old_resolution
-		path.texture_width = int(new_texture_width)
+		var new_texture_width = path.paint_width * path_mask_resolution / old_resolution
+		path.paint_width = int(new_texture_width)
 	
 	terrain_need_update.emit()
 
 
-# Never call _update_terrain directly. Emit the signal terrain_need_update instead.
+## Never call _update_terrain directly. Emit the signal terrain_need_update instead.
 func _update_terrain():
 	# Block if alredy received an update request on the current frame.
 	if is_updating == true:
@@ -165,10 +170,9 @@ func _bake_terrain() -> void:
 	var new_mesh: MeshInstance3D = bake.create_mesh(self, size, path_mask_resolution)
 	add_sibling(new_mesh, true)
 	new_mesh.owner = owner
-	visible = false
 
 
-# Create a file dialog, then call _export_gltf when the file path is chosen.
+## Create a file dialog, then call _export_gltf when the file path is chosen.
 func _export_terrain() -> void:
 	var path = "res://" + name + ".glb"
 	var editorViewport = EditorInterface.get_editor_viewport_3d()
@@ -182,7 +186,7 @@ func _export_terrain() -> void:
 	fileDialog.popup_file_dialog()
 
 
-# Export the mesh to GLTF file.
+## Export the mesh to GLTF file.
 func _export_gltf(path: String):
 	var export = CSGTerrainBake.new()
 	export.export_gltf(path, self, size, path_mask_resolution)

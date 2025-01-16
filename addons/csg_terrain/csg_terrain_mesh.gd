@@ -1,4 +1,5 @@
-# Class responsible to deal with the mesh itself. This is what makes the terrein bend with the curves.
+## Class responsible to deal with the mesh itself.
+## This is what makes the terrain bend with the curves.
 class_name CSGTerrainMesh
 
 # Vertex grid in [x][z] plane.
@@ -8,22 +9,25 @@ var uvs: PackedVector2Array = []
 var indices: PackedInt32Array = []
 
 
-# Main mesh manager. This is what external classes should call.
+## Main mesh manager. This is what external classes should call.
 func update_mesh(mesh: ArrayMesh, path_list: Array[CSGTerrainPath], divs: int, size: float) -> void:
-	# Recrieate all mesh arrays. seems expensive but is the last of our problems.
-	create_mesh_arrays(divs, size)
+	# Recrieate all mesh arrays. Seems expensive but is the last of our problems.
+	_create_mesh_arrays(divs, size)
 	
 	# Make the mesh follow each path, in tree order. 90% of the time is spent here.
 	for path in path_list:
 		if path.curve.bake_interval != (size / divs):
 			path.curve.bake_interval = (size / divs)
-		follow_curve(path, divs, size)
+		
+		if path.width > 0:
+			_follow_curve(path, divs, size)
 	
 	# Organize all the mesh at once. Again, seems expensive but is not an issue.
-	commit_mesh(size, divs, mesh)
+	_commit_mesh(size, divs, mesh)
 
 
-func create_mesh_arrays(divs: int, size: float) -> void:
+## Create the terrain mesh according the vertex grid.
+func _create_mesh_arrays(divs: int, size: float) -> void:
 	# Vertex Grid follow the pattern [x][z]. The y axis is what will follow the curves.
 	vertex_grid.clear()
 	vertex_grid.resize(divs + 1)
@@ -73,7 +77,8 @@ func create_mesh_arrays(divs: int, size: float) -> void:
 			index += 6
 
 
-func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
+## Finalize the mesh and aplly to the CSGMesh3D node.
+func _commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	# Mesh in ArrayMesh format.
 	var surface_array: Array = []
 	surface_array.resize(Mesh.ARRAY_MAX)
@@ -88,7 +93,7 @@ func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	
 	surface_array[Mesh.ARRAY_VERTEX] = vert_list
 	
-	# Make normals according Clever Normalization of a Mesh: https://iquilezles.org/articles/normals/
+	# Make normals according Clever Normalization of a Mesh: https://iquilezles.org/articles/normals
 	# Making manually because using surfacetool was 3-5 times slower.
 	var normals: PackedVector3Array = []
 	normals.resize((divs + 1) * (divs + 1))
@@ -116,14 +121,15 @@ func commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	surface_array[Mesh.ARRAY_NORMAL] = normals
 	
 	# Closing the shape because Godot 4.4 need this.
-	close_shape(size, divs, surface_array)
+	_close_shape(size, divs, surface_array)
 	
 	# Commit to the main mash.
 	mesh.clear_surfaces()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
 
 
-func follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
+## Bend the terrain height to follow the curve.
+func _follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 	var width: int = path.width
 	var smoothness: float = path.smoothness
 	
@@ -134,14 +140,14 @@ func follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 	
 	if baked3D.size() < 2: return
 	
-	# Make a curve on xz plane.
-	var baked2D: Array[Vector2] = []
+	# Project the curve baked points in the [x][z] plane.
+	var baked2D: PackedVector2Array = []
 	baked2D.resize(baked3D.size())
 	for i in range(baked3D.size()):
 		var point: Vector3 = baked3D[i]
 		baked2D[i] = Vector2(point.x, point.z)
 	
-	# Dictionary with vertices around the curve by "witdh" size.
+	# Dictionary with all vertices at "width" distance from the curve.
 	var curve_vertices = {}
 	for point in baked3D:
 		var local_point: Vector3 = point + pos + center
@@ -171,7 +177,9 @@ func follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 		
 		# Vertex in path space.
 		var path_vertex: Vector3 = vertex - pos
-		var closest: Vector3 = get_closest_point_in_xz_plane(baked2D, baked3D, path_vertex)
+		
+		# Get the closest point on the 3D curve without considering the height.
+		var closest: Vector3 = _get_closest_point_in_xz_plane(baked2D, baked3D, path_vertex)
 		
 		# Back to local space.
 		closest += pos
@@ -192,44 +200,56 @@ func follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 	
 	# Update indices on affected vertices.
 	for grid_idx in curve_vertices:
-		update_quad_indices(grid_idx, divs)
+		_update_quad_indices(grid_idx, divs)
 
 
-# Get the closest point on the 3D curve given a point on the xz plane. Really expensive, takes 80% of all time!
-func get_closest_point_in_xz_plane(points_2D: Array[Vector2], points_3D: Array[Vector3], vertex3D: Vector3) -> Vector3:
+## Get the closest point on the 2D curve and project on the 3D curve.
+## Expensive, takes 50% of all time!
+func _get_closest_point_in_xz_plane(
+		baked_2D: PackedVector2Array,
+		baked_3D: PackedVector3Array,
+		vertex3D: Vector3) -> Vector3:
+	
 	var vertex2D = Vector2(vertex3D.x, vertex3D.z)
-	var closest2D: Vector2 = Vector2.ZERO
 	
-	# Get the closest point in xz plane.
-	var min_dist: float = INF
-	var min_idx: int = 0
-	for i in range(points_2D.size() - 1):
-		var point2D: Vector2 = points_2D[i]
-		var next_point2D: Vector2 = points_2D[i + 1]
-		
-		# The reason why this method is so expensive, this function is made by brute force on Godot code!
-		var closest: Vector2 = Geometry2D.get_closest_point_to_segment(vertex2D, point2D, next_point2D)
-		var dist = closest.distance_squared_to(vertex2D)
-		
-		if dist < min_dist:
-			min_dist = dist
-			min_idx = i
-			closest2D = closest
+	# Get the closest baked point in xz plane.
+	var idx: int = 0
+	var dist: float = INF
+	var old_dist: float = INF
+	for i in range(1, baked_2D.size() - 1):
+		dist = vertex2D.distance_squared_to(baked_2D[i])
+		if dist < old_dist:
+			old_dist = dist
+			idx = i
 	
-	# Get the point in the 3D curve.
-	var point3D: Vector3 = points_3D[min_idx]
-	var next_point3D: Vector3 = points_3D[min_idx + 1]
-	var close3D: PackedVector3Array = Geometry3D.get_closest_points_between_segments(
-		point3D, next_point3D,
+	# Check next segment.
+	var next_seg: Vector2 = Geometry2D.get_closest_point_to_segment(
+		vertex2D, baked_2D[idx], baked_2D[idx + 1]) 
+	var next_dist: float = vertex2D.distance_squared_to(next_seg)
+	
+	# Check previews segment.
+	var prev_seg: Vector2 = Geometry2D.get_closest_point_to_segment(
+		vertex2D, baked_2D[idx], baked_2D[idx - 1])
+	var prev_dist: float = vertex2D.distance_squared_to(prev_seg)
+	
+	 # Project the closest 2D segment on the 3D curve.
+	var closest_point: Vector3 = Vector3.ZERO
+	if next_dist < prev_dist:
+		closest_point = Geometry3D.get_closest_points_between_segments(
+		baked_3D[idx], baked_3D[idx + 1],
 		# Vertical axis that cross the curve.
-		Vector3(closest2D.x, -65536, closest2D.y), Vector3(closest2D.x, 65536, closest2D.y))
+		Vector3(next_seg.x, -65536, next_seg.y), Vector3(next_seg.x, 65536, next_seg.y))[0]
+	else:
+		closest_point = Geometry3D.get_closest_points_between_segments(
+		baked_3D[idx], baked_3D[idx - 1],
+		# Vertical axis that cross the curve.
+		Vector3(prev_seg.x, -65536, prev_seg.y), Vector3(prev_seg.x, 65536, prev_seg.y))[0]
 	
-	var closest_point: Vector3 = close3D[0]
 	return closest_point
 
 
-# There are two ways to triangularize a quad. To better follow the path, convex in y will be used.
-func update_quad_indices(idx: Vector2i, divs: int) -> void:
+## There are two ways to triangularize a quad. To better follow the path, convex in y will be used.
+func _update_quad_indices(idx: Vector2i, divs: int) -> void:
 	var x: int = idx.x
 	if (x + 1) > divs: return
 	var z: int = idx.y
@@ -269,7 +289,7 @@ func update_quad_indices(idx: Vector2i, divs: int) -> void:
 
 # CSG meshes must be closed in Godot 4.4, this is the price for fast CSG.
 # Making a cube bellow the tarrain.
-func close_shape(size: float, divs: int, surface_array: Array):
+func _close_shape(size: float, divs: int, surface_array: Array):
 	# Add vertices of the bottom quad.
 	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)
 	
