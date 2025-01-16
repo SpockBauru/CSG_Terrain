@@ -39,7 +39,7 @@ When creating a new Path3D as child of the CSG Terrain node, the path node will 
 **Paint Smoothness:** How much the path texture will blend with the terrain. Zero will cause blockness and high values will make the texture thinner.
 
 <p align="center" width="100%">
-  <img width="500px" src="https://github.com/user-attachments/assets/d9aa2e37-deb5-41fb-bfdc-d8e0ef34e828"
+  <img width="500px" src="https://github.com/user-attachments/assets/513440c5-b64b-40d8-a647-67a825e0e661"
 </p>
 
 ### Order matters
