@@ -62,7 +62,7 @@ func _ready() -> void:
 	# If there's no mesh, make a new one and also the first curve.
 	if not is_instance_valid(mesh):
 		mesh = ArrayMesh.new()
-		var path: Path3D = Path3D.new()
+		var path: CSGTerrainPath = CSGTerrainPath.new()
 		path.name = "Path3D"
 		var curve: Curve3D = Curve3D.new()
 		curve.add_point(Vector3(0, 0, -40))
