@@ -26,7 +26,7 @@ You can place several Path3D nodes as needed.
 
 
 ## How to install
-1) Download the file `CSG_Terrain_0.5-Beta.zip` from the [Download Page](https://github.com/SpockBauru/LightmapProbeGrid/releases)
+1) Download the file `CSG_Terrain_0.5-Beta.zip` from the [Download Page](https://github.com/SpockBauru/CSG_Terrain/releases)
 2) Extract the `addons` folder on the root of your project (`res://`). Other files/folders are optional.
 3) Go to Godot's "Project" menu -> "Project Settings" -> "Plugins" tab -> enable "CSG TErrain".
 4) Place the CSGTerrain node in your scene \o/
