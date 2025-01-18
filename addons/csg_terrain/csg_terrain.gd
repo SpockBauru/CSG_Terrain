@@ -67,8 +67,8 @@ func _ready() -> void:
 		var curve: Curve3D = Curve3D.new()
 		curve.add_point(Vector3(0, 0, 0))
 		curve.add_point(Vector3(0, 35, -40))
-		curve.set_point_in(1 , Vector3(0, 0, -15))
-		curve.set_point_out(1 , Vector3(0, 0, 15))
+		curve.set_point_in(1 , Vector3(0, 0, 15))
+		curve.set_point_out(1 , Vector3(0, 0, -15))
 		path.curve = curve
 		add_child(path, true)
 		path.set_owner(get_tree().edited_scene_root)
