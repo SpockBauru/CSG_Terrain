@@ -1,4 +1,4 @@
-## WARNING: This plugin is in beta phase. Only works with Godot 4.4 beta or later.
+## WARNING: This plugin only works with Godot 4.4 beta or later.
 
 # CSG Terrain
 > ### Prototype your terrain faster with the power of curves and [CSG nodes](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
@@ -25,7 +25,7 @@ You can place several Path3D nodes as needed.
 
 
 ## How to install
-1) Download the file `CSG_Terrain_0.5-Beta.zip` from the [Download Page.](https://github.com/SpockBauru/CSG_Terrain/releases)
+1) Download the file `CSG_Terrain_0.9-rc.zip` from the [Download Page.](https://github.com/SpockBauru/CSG_Terrain/releases)
 2) Extract the `addons` folder on the root of your project (`res://`). Other files/folders are optional.
 3) Go to Godot's "Project" menu -> "Project Settings" -> "Plugins" tab -> enable "CSG Terrain".
 4) Place the CSGTerrain node in your scene \o/
@@ -43,7 +43,7 @@ Place the CSG Terrain node in "Add Node" -> "Search" -> type CSGTerrain. The nod
 
 **Divs:** The number of faces on each side of the terrain. Higher values will cause slowdown and are not recommended. Place several smaller terrains instead.
 
-**Path Mask Resolution:** The resolution of the mask applied to the path texture. Only change if the [path texture](#the-path-workflow) is not merging accordingly.
+**Path Mask Resolution:** The resolution of the mask applied to the path texture. Only change if the [Path Texture](#the-path-workflow) is not merging accordingly.
 
 **Bake Terrain Mesh:** Create a MeshInstance3D without the bottom cube. It will be placed below the CSG Terrain node. This step is necessary in order to be compatible with Godot's Baked Global Illumination [(LightmapGI)](https://docs.godotengine.org/en/stable/tutorials/3d/global_illumination/using_lightmap_gi.html).
 
@@ -125,5 +125,8 @@ This tool was entirely made in my free time. If you want to support me, please m
 
 
 ## Changelog
+v0.9-rc:
+- Bugfixes
+
 v0.5-beta:
 - First release.

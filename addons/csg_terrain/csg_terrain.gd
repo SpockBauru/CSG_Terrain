@@ -167,7 +167,7 @@ func _update_terrain():
 ## Good topology is not guaranteed. You may need to edit it manually in 3D software.
 func _bake_terrain() -> void:
 	var bake = CSGTerrainBake.new()
-	var new_mesh: MeshInstance3D = bake.create_mesh(self, size, path_mask_resolution)
+	var new_mesh: MeshInstance3D = bake.create_mesh(self, size, divs)
 	add_sibling(new_mesh, true)
 	new_mesh.owner = owner
 
@@ -189,6 +189,6 @@ func _export_terrain() -> void:
 ## Export the mesh to GLTF file.
 func _export_gltf(path: String):
 	var export = CSGTerrainBake.new()
-	export.export_gltf(path, self, size, path_mask_resolution)
+	export.export_gltf(path, self, size, divs)
 	fileDialog.queue_free()
 	EditorInterface.get_resource_filesystem().scan_sources()

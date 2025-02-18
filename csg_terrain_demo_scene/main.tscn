@@ -270,7 +270,7 @@ transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 13, 11, -25)
 operation = 2
 radius = 6.0
 height = 70.0
-sides = 6
+sides = 16
 material = SubResource("StandardMaterial3D_ewlwn")
 
 [node name="BottomCut" type="CSGBox3D" parent="CSGTerrain/TunnelHole"]

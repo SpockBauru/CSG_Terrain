@@ -2,7 +2,7 @@
 class_name CSGTerrainBake
 
 
-func create_mesh(csg_mesh: CSGMesh3D, size: float, path_mask_resolution) -> MeshInstance3D:
+func create_mesh(csg_mesh: CSGMesh3D, size: float, divs: int) -> MeshInstance3D:
 	# Creating a new meshArray.
 	var new_array_mesh: ArrayMesh = ArrayMesh.new()
 	new_array_mesh.clear_surfaces()
@@ -55,7 +55,7 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, path_mask_resolution) -> Mesh
 	var terrain_mesh: MeshInstance3D = MeshInstance3D.new()
 	terrain_mesh.name = csg_mesh.name + "-Mesh"
 	terrain_mesh.mesh = new_array_mesh
-	terrain_mesh.mesh.lightmap_size_hint = Vector2i(path_mask_resolution, path_mask_resolution)
+	terrain_mesh.mesh.lightmap_size_hint = Vector2i(divs, divs)
 	
 	# Copy Mesh parameters.
 	terrain_mesh.transform = csg_mesh.transform
@@ -71,8 +71,8 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, path_mask_resolution) -> Mesh
 
 
 ## Save the terrain mesh to the desired path.
-func export_gltf(path: String, csg_mesh: CSGMesh3D, size: float, path_mask_resolution):
-	var mesh = create_mesh(csg_mesh, size, path_mask_resolution)
+func export_gltf(path: String, csg_mesh: CSGMesh3D, size: float, divs: int):
+	var mesh = create_mesh(csg_mesh, size, divs)
 	csg_mesh.get_parent().add_child(mesh, true)
 	
 	var gltf_document_save := GLTFDocument.new()
