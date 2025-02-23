@@ -120,6 +120,10 @@ The code aims to be readable and beginner friendly. Users are encouraged to chan
 Contributions to make the code simpler, more readable and bugfixes are welcomed. Optimizations must be easy to understand even for beginner/intermediate users, example: Advanced features like compute shaders would greatly benefit the plugin speed, but will be kept out of the code in order to keep it accessible.
 
 
+## Acknowledgements
+A big thank you to [@fire](https://github.com/fire) for overhauling Godot's CSG System. Without it, this plugin would not be possible.
+
+
 ## Ending notes
 This tool was entirely made in my free time. If you want to support me, please make an awesome asset and publish for free to the community!
 
