@@ -55,7 +55,7 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, divs: int) -> MeshInstance3D:
 	var terrain_mesh: MeshInstance3D = MeshInstance3D.new()
 	terrain_mesh.name = csg_mesh.name + "-Mesh"
 	terrain_mesh.mesh = new_array_mesh
-	terrain_mesh.mesh.lightmap_size_hint = Vector2i(divs, divs)
+	terrain_mesh.mesh.lightmap_size_hint = Vector2i(divs * 10, divs * 10)
 	
 	# Copy Mesh parameters.
 	terrain_mesh.transform = csg_mesh.transform

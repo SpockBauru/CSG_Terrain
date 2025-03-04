@@ -1,15 +1,15 @@
-## WARNING: This plugin only works with Godot 4.4 beta or later.
-
 # CSG Terrain
-> ### Prototype your terrain faster with the power of curves and [CSG nodes](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
-
 <p align="center" width="100%">
   <img width="501px" src="https://github.com/user-attachments/assets/dca0127c-8349-41f5-9dcc-a66836708446"
 </p>
 
+> ### Prototype your terrain faster with the power of curves and [CSG nodes](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
+
+**Video Tutorial:** https://www.youtube.com/watch?v=WvpFUpjmPUc
+
 
 ## What is it?
-CSG Terrain is a plugin for [Godot Engine](https://godotengine.org/) to prototype terrains on a simple and non-destructive way. It's made with CSG (Constructive Solid Geometry), so you are supposed to combine with geometric shapes and even other terrains to achieve the desired form. [Read more about CSG](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
+CSG Terrain is a plugin for [Godot Engine](https://godotengine.org/) 4.4 (or later) to prototype terrains on a simple and non-destructive way. It's made with CSG (Constructive Solid Geometry), so you are supposed to combine with geometric shapes and even other terrains to achieve the desired form. [Read more about CSG](https://docs.godotengine.org/en/stable/tutorials/3d/csg_tools.html).
 
 Unlike other systems **the terrain is molded purely with paths, not brushes or other 3D tools**. This forced simplicity allows to focus on what is important before finalizing in 3D software.
 
@@ -25,10 +25,10 @@ You can place several Path3D nodes as needed.
 
 
 ## How to install
-1) Download the file `CSG_Terrain_0.9-rc.zip` from the [Download Page.](https://github.com/SpockBauru/CSG_Terrain/releases)
+1) Download the file `CSG_Terrain_1.0.zip` from the [Download Page.](https://github.com/SpockBauru/CSG_Terrain/releases)
 2) Extract the `addons` folder on the root of your project (`res://`). Other files/folders are optional.
 3) Go to Godot's "Project" menu -> "Project Settings" -> "Plugins" tab -> enable "CSG Terrain".
-4) Place the CSGTerrain node in your scene \o/
+4) Place the CSGTerrain node in your scene. \o/
 
 
 ## The CSG Terrain node
@@ -112,6 +112,10 @@ CSG Terrain is not designed to work with a high number of [Divs](#the-csg-terrai
 Too many or too large paths can decrease performance in the editor. Simple optimization ideas are welcomed as explained in the next section.
 
 
+## Compatibility
+CSG Terrain is compatible with Godot 4.4 and there are plans to continue supporting onward.
+
+
 ## Future features and how to contribute
 CSG Terrain is designed to be as simple as possible. Because of that **no new features are planned** in order to avoid [feature creep](https://en.wikipedia.org/wiki/Feature_creep).
 
@@ -129,6 +133,9 @@ This tool was entirely made in my free time. If you want to support me, please m
 
 
 ## Changelog
+v1.0:
+- Bugfixes
+
 v0.9-rc:
 - Bugfixes
 
