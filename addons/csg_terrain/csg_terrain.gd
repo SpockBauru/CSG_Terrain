@@ -39,12 +39,10 @@ signal terrain_need_update
 ## Create an GLTF file without the bottom cube.
 @export_tool_button("Export Terrain File", "File") var export_button = _export_terrain
 
-# Dialog box for Save GLTF file
-var fileDialog: EditorFileDialog = null
-
 # CSG Terrain classes.
 var terrain_mesh = CSGTerrainMesh.new()
 var textures = CSGTerrainTextures.new()
+var bake_export = CSGTerrainBake.new()
 var path_list: Array[CSGTerrainPath] = []
 
 var is_updating: bool = false
@@ -58,6 +56,7 @@ func _ready() -> void:
 	# Instantiate material if it's empty.
 	if not is_instance_valid(material):
 		material = load("res://addons/csg_terrain/csg_terrain_material.tres").duplicate(true)
+		material.shader = load("res://addons/csg_terrain/csg_terrain_shader.gdshader")
 	
 	# If there's no mesh, make a new one and also the first curve.
 	if not is_instance_valid(mesh):
@@ -166,29 +165,11 @@ func _update_terrain():
 ## Create an optimized MeshInstance3D without the bottom cube[br][br].
 ## Good topology is not guaranteed. You may need to edit it manually in 3D software.
 func _bake_terrain() -> void:
-	var bake = CSGTerrainBake.new()
-	var new_mesh: MeshInstance3D = bake.create_mesh(self, size, divs)
+	var new_mesh: MeshInstance3D = bake_export.create_mesh(self, size, divs)
 	add_sibling(new_mesh, true)
 	new_mesh.owner = owner
 
 
-## Create a file dialog, then call _export_gltf when the file path is chosen.
-func _export_terrain() -> void:
-	var path = "res://" + name + ".glb"
-	var editorViewport = EditorInterface.get_editor_viewport_3d()
-	fileDialog = EditorFileDialog.new()
-	editorViewport.add_child(fileDialog, true)
-	
-	fileDialog.file_selected.connect(_export_gltf)
-	fileDialog.current_path = path
-	fileDialog.access = EditorFileDialog.ACCESS_FILESYSTEM
-	fileDialog.set_meta("_created_by", self)
-	fileDialog.popup_file_dialog()
-
-
-## Export the mesh to GLTF file.
-func _export_gltf(path: String):
-	var export = CSGTerrainBake.new()
-	export.export_gltf(path, self, size, divs)
-	fileDialog.queue_free()
-	EditorInterface.get_resource_filesystem().scan_sources()
+## Export terrain dialog box
+func _export_terrain():
+	bake_export.export_terrain(self, size, divs)

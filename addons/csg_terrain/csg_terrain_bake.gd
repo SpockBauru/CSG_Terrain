@@ -1,6 +1,11 @@
 ## Class Responsible to create a MeshInstance3D in the scene.
 class_name CSGTerrainBake
 
+var fileDialog: FileDialog = null
+var csg_mesh: CSGMesh3D = null
+var size: float = 0
+var divs: int = 0
+
 
 func create_mesh(csg_mesh: CSGMesh3D, size: float, divs: int) -> MeshInstance3D:
 	# Creating a new meshArray.
@@ -70,14 +75,38 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, divs: int) -> MeshInstance3D:
 	return terrain_mesh
 
 
-## Save the terrain mesh to the desired path.
-func export_gltf(path: String, csg_mesh: CSGMesh3D, size: float, divs: int):
+## Create a file dialog, then call _export_gltf when the file path is chosen.
+func export_terrain(_csg_mesh: CSGMesh3D, _size: float, _divs: int) -> void:
+	csg_mesh = _csg_mesh
+	size = _size
+	divs = _divs
+	
+	var path = "res://" + csg_mesh.name + ".glb"
+	var editorViewport = Engine.get_singleton(&"EditorInterface").get_editor_viewport_3d()
+	fileDialog = FileDialog.new()
+	editorViewport.add_child(fileDialog, true)
+	
+	fileDialog.file_selected.connect(_export_gltf)
+	fileDialog.current_path = path
+	fileDialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	fileDialog.access = FileDialog.ACCESS_FILESYSTEM
+	fileDialog.set_meta("_created_by", csg_mesh)
+	fileDialog.popup(Rect2i(100, 100, 600, 400))
+
+
+## Export the mesh to GLTF file.
+func _export_gltf(path: String):
+	# Creating the new mesh.
 	var mesh = create_mesh(csg_mesh, size, divs)
 	csg_mesh.get_parent().add_child(mesh, true)
 	
+	# Saving GLTF file.
 	var gltf_document_save := GLTFDocument.new()
 	var gltf_state_save := GLTFState.new()
 	gltf_document_save.append_from_scene(mesh, gltf_state_save)
 	gltf_document_save.write_to_filesystem(gltf_state_save, path)
 	
+	# Cleaning.
+	fileDialog.queue_free()
 	mesh.queue_free()
+	Engine.get_singleton(&"EditorInterface").get_resource_filesystem().scan_sources()

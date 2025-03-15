@@ -6,7 +6,7 @@ group_uniforms ground;
 uniform vec2 ground_scale = vec2(0.01, 0.01);
 uniform vec4 ground_color: source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform sampler2D ground_albedo : source_color, filter_linear_mipmap_anisotropic;
-uniform sampler2D ground_normal_map : hint_normal;
+uniform sampler2D ground_normal_map : hint_normal, filter_linear_mipmap_anisotropic;
 uniform float ground_normal_strenght = 1.0;
 uniform sampler2D ground_rough_map;
 uniform float ground_roughness = 1.0;
