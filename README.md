@@ -133,6 +133,10 @@ This tool was entirely made in my free time. If you want to support me, please m
 
 
 ## Changelog
+v1.0.1
+- Fixed errors on exported projects
+- Fixed terrain shader
+
 v1.0:
 - Bugfixes
 
