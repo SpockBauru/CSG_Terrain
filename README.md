@@ -107,6 +107,8 @@ The terrain material aims to be simple and serves as a base for users to make th
 
 
 ## Limitations
+CSG Terrain only works in the editor. It's too heavy for the player's machine.
+
 CSG Terrain is not designed to work with a high number of [Divs](#the-csg-terrain-node). Instead, consider placing several smaller terrains.
 
 Too many or too large paths can decrease performance in the editor. Simple optimization ideas are welcomed as explained in the next section.
@@ -135,7 +137,7 @@ This tool was entirely made in my free time. If you want to support me, please m
 ## Changelog
 v1.0.1
 - Fixed errors on exported projects
-- Fixed terrain shader
+- Fixed the terrain shader
 
 v1.0:
 - Bugfixes
