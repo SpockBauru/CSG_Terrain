@@ -109,7 +109,9 @@ func _child_exit(child) -> void:
 		if child.curve_changed.is_connected(_update_terrain):
 			child.curve_changed.disconnect(_update_terrain)
 		
-		terrain_need_update.emit()
+		# Check if the current editor tab is the CSG Terrain scene. Fix bug when changing tabs.
+		if Engine.get_singleton(&"EditorInterface").get_edited_scene_root() == get_tree().edited_scene_root:
+			terrain_need_update.emit()
 
 
 func _child_order_changed() -> void:
@@ -165,6 +167,7 @@ func _update_terrain():
 ## Create an optimized MeshInstance3D without the bottom cube[br][br].
 ## Good topology is not guaranteed. You may need to edit it manually in 3D software.
 func _bake_terrain() -> void:
+	await get_tree().process_frame
 	var new_mesh: MeshInstance3D = bake_export.create_mesh(self, size, divs)
 	add_sibling(new_mesh, true)
 	new_mesh.owner = owner
@@ -172,4 +175,5 @@ func _bake_terrain() -> void:
 
 ## Export terrain dialog box
 func _export_terrain():
+	await get_tree().process_frame
 	bake_export.export_terrain(self, size, divs)
