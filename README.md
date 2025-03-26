@@ -25,7 +25,7 @@ You can place several Path3D nodes as needed.
 
 
 ## How to install
-1) Download the file `CSG_Terrain_v1.0.1.zip` from the [Download Page.](https://github.com/SpockBauru/CSG_Terrain/releases)
+1) Download the file `CSG_Terrain_v1.0.2.zip` from the [Download Page.](https://github.com/SpockBauru/CSG_Terrain/releases)
 2) Extract the `addons` folder on the root of your project (`res://`). Other files/folders are optional.
 3) Go to Godot's "Project" menu -> "Project Settings" -> "Plugins" tab -> enable "CSG Terrain".
 4) Place the CSGTerrain node in your scene. \o/
@@ -135,6 +135,9 @@ This tool was entirely made in my free time. If you want to support me, please m
 
 
 ## Changelog
+v1.0.2
+- Fix bug when editor tab change focus
+
 v1.0.1
 - Fixed errors on exported projects
 - Fixed the terrain shader
