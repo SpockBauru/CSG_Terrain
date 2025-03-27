@@ -107,7 +107,7 @@ The terrain material aims to be simple and serves as a base for users to make th
 
 
 ## Limitations
-CSG Terrain only works in the editor. It's too heavy for the player's machine.
+The terrain can only be edited inside Godot's editor. It's too heavy for the player's machine.
 
 CSG Terrain is not designed to work with a high number of [Divs](#the-csg-terrain-node). Instead, consider placing several smaller terrains.
 
