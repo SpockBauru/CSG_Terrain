@@ -106,16 +106,16 @@ The Shader Parameter **Wall Underlay** set how the wall will be merged with the 
 The terrain material aims to be simple and serves as a base for users to make their own terrain material. In the final product it's recommended to polish this shader and make optimizations such as [channel packing](http://wiki.polycount.com/wiki/ChannelPacking).
 
 
+## Compatibility
+CSG Terrain is compatible with Godot 4.4 and there are plans to continue supporting onward.
+
+
 ## Limitations
 The terrain can only be edited inside Godot's editor. It's too heavy for the player's machine.
 
 CSG Terrain is not designed to work with a high number of [Divs](#the-csg-terrain-node). Instead, consider placing several smaller terrains.
 
 Too many or too large paths can decrease performance in the editor. Simple optimization ideas are welcomed as explained in the next section.
-
-
-## Compatibility
-CSG Terrain is compatible with Godot 4.4 and there are plans to continue supporting onward.
 
 
 ## Future features and how to contribute
