@@ -30,7 +30,7 @@ uniform sampler2D path_normal_map : hint_normal, filter_linear_mipmap_anisotropi
 uniform float path_normal_strenght = 1.0;
 uniform sampler2D path_rough_map;
 uniform float path_roughness = 1.0;
-uniform sampler2D path_mask: filter_linear;
+uniform sampler2D path_mask: hint_default_black, filter_linear;
 group_uniforms;
 
 varying float wall_blend;

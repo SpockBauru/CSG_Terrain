@@ -9,6 +9,17 @@ func apply_textures(material: Material, path_list: Array[CSGTerrainPath], mask_s
 	if path_list.size() <= 0: 
 		return
 	
+	# Don't set a mask if paths have no paint
+	var have_paint : bool = false;
+	for path in path_list:
+		if path.paint_width > 0:
+			have_paint = true;
+	
+	if have_paint == false:
+		material.set_shader_parameter("path_mask", null)
+		return
+	
+	# Making the mask
 	mask = Image.create_empty(mask_size, mask_size, false, Image.FORMAT_R8)
 	var data: PackedByteArray = mask.get_data()
 	
