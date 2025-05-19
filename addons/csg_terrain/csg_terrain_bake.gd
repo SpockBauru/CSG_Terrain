@@ -39,7 +39,14 @@ func create_mesh(csg_mesh: CSGMesh3D, size: float, divs: int) -> MeshInstance3D:
 				uvs.remove_at(i)
 				uvs.remove_at(i - 1)
 				uvs.remove_at(i - 2)
-		surface[Mesh.ARRAY_TEX_UV2] = uvs
+		
+		# Making UV2 for Lightmaps
+		var uv2: PackedVector2Array = []
+		uv2.resize(uvs.size())
+		
+		for i in uv2.size():
+			uv2[i] = Vector2(0.5, 0.5) + Vector2(vertices[i].x, vertices[i].z) / size
+		surface[Mesh.ARRAY_TEX_UV2] = uv2
 	
 		# Optimizing surface.
 		var st = SurfaceTool.new()
