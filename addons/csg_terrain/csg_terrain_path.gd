@@ -32,7 +32,7 @@ extends Path3D
 		paint_smoothness = value
 		curve_changed.emit()
 
-var old_transform: Transform3D
+var old_transform: Transform3D = transform
 
 
 # Check if curve was moved

@@ -30,8 +30,6 @@ sky_material = SubResource("ProceduralSkyMaterial_sg3mp")
 background_mode = 2
 sky = SubResource("Sky_h35h7")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_myyvq"]
-
 [sub_resource type="Curve3D" id="Curve3D_syd0c"]
 bake_interval = 10.0
 _data = {
@@ -235,7 +233,6 @@ transform = Transform3D(-0.984808, 0.0593911, -0.163176, 0, 0.939693, 0.34202, 0
 
 [node name="CSGTerrain" type="CSGMesh3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
-mesh = SubResource("ArrayMesh_myyvq")
 script = ExtResource("1_s7ily")
 
 [node name="RoadPath" type="Path3D" parent="CSGTerrain"]
