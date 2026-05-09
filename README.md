@@ -137,7 +137,7 @@ This tool was entirely made in my free time. If you want to support me, please m
 ## Changelog
 v1.1.1
 - Fixed unnecessary terrain updates.
-- Fixed error spam when other materials are used for the terrain, such as MeshInstance3D or none.
+- Fixed error spam when other materials are used for the terrain, such as StandardMaterial3D or none.
 
 
 v1.1
