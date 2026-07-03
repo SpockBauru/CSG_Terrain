@@ -77,7 +77,7 @@ func _create_mesh_arrays(divs: int, size: float) -> void:
 			index += 6
 
 
-## Finalize the mesh and aplly to the CSGMesh3D node.
+## Finalize the mesh and apply to the CSGMesh3D node.
 func _commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	# Mesh in ArrayMesh format.
 	var surface_array: Array = []
@@ -123,7 +123,7 @@ func _commit_mesh(size: float, divs: int, mesh: ArrayMesh) -> void:
 	# Closing the shape because Godot 4.4 need this.
 	_close_shape(size, divs, surface_array)
 	
-	# Commit to the main mash.
+	# Commit to the main mesh.
 	mesh.clear_surfaces()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
 
@@ -156,7 +156,7 @@ func _follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 		var grid_point: Vector3 = local_point * divs / size
 		var grid_index: Vector2i = Vector2i(int(grid_point.x), int(grid_point.z))
 		
-		# Exprore the region around the point. Cut out points outside the grid.
+		# Explore the region around the point. Cut out points outside the grid.
 		var range_min_x: int = -width + 1 + grid_index.x
 		range_min_x = clampi(range_min_x, 0, divs + 1)
 		var range_max_x: int = width + 2 + grid_index.x
@@ -184,7 +184,7 @@ func _follow_curve(path: CSGTerrainPath, divs: int, size: float) -> void:
 		# Back to local space.
 		closest += pos
 		
-		# Distance relative to path witdh.
+		# Distance relative to path width.
 		vertex.y = closest.y
 		var dist = vertex.distance_to(closest)
 		if width == 0: width = 1
@@ -288,7 +288,7 @@ func _update_quad_indices(idx: Vector2i, divs: int) -> void:
 
 
 # CSG meshes must be closed in Godot 4.4, this is the price for fast CSG.
-# Making a cube bellow the tarrain.
+# Making a cube below the terrain.
 func _close_shape(size: float, divs: int, surface_array: Array):
 	# Add vertices of the bottom quad.
 	var center: Vector3 = Vector3(0.5 * size, 0, 0.5 * size)

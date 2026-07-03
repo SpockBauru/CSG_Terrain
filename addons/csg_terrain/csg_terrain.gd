@@ -37,7 +37,7 @@ signal resolution_changed
 
 ## Create an optimized MeshInstance3D without the bottom cube.[br][br]
 ## Good topology is not guaranteed. You may need to edit it manually in 3D software.
-@export_tool_button("Bake Terrain Mesh", "MeshInstance3D") var nake_button = _bake_terrain
+@export_tool_button("Bake Terrain Mesh", "MeshInstance3D") var bake_button = _bake_terrain
 
 ## Create an GLTF file without the bottom cube.
 @export_tool_button("Export Terrain File", "File") var export_button = _export_terrain
